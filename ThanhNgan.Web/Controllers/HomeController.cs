@@ -33,12 +33,8 @@ public class HomeController : Controller
             TopCategories = await _db.Categories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.DisplayOrder).ToListAsync(),
             BestSellers = bestSellerProductIds.Select(id => bestSellerProducts.FirstOrDefault(p => p.Id == id)).Where(p => p != null).Select(p => p!.ToCard()).ToList(),
             FeaturedProducts = (await baseQuery.Where(p => p.IsFeatured).Take(8).ToListAsync()).Select(p => p.ToCard()).ToList(),
-            CheapProducts = (await baseQuery.ToListAsync())
-                .Select(p => p.ToCard())
-                .Where(c => c.MinPrice > 0)
-                .OrderBy(c => c.MinSalePrice ?? c.MinPrice)
-                .Take(8)
-                .ToList(),
+            CheapProducts = (await baseQuery.Where(p => p.IsCheap).Take(8).ToListAsync()).Select(p => p.ToCard()).ToList(),
+            NewestProducts = (await baseQuery.OrderByDescending(p => p.CreatedAt).Take(12).ToListAsync()).Select(p => p.ToCard()).ToList(),
             LatestPosts = await _db.BlogPosts.Where(b => b.IsPublished).OrderByDescending(b => b.PublishedAt).Take(3).ToListAsync()
         };
         return View(vm);

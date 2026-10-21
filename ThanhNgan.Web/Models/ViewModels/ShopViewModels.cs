@@ -49,5 +49,6 @@ public class HomeViewModel
     public List<ProductCardViewModel> BestSellers { get; set; } = new();
     public List<ProductCardViewModel> FeaturedProducts { get; set; } = new();
     public List<ProductCardViewModel> CheapProducts { get; set; } = new();
+    public List<ProductCardViewModel> NewestProducts { get; set; } = new();
     public List<BlogPost> LatestPosts { get; set; } = new();
 }

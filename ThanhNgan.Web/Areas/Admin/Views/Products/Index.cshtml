@@ -14,7 +14,7 @@
         @foreach (var p in Model)
         {
             <tr>
-                <td>@p.Name @(p.IsFeatured ? "⭐" : "") @(p.IsNew ? "🆕" : "")</td>
+                <td>@p.Name @(p.IsFeatured ? "⭐" : "") @(p.IsNew ? "🆕" : "") @(p.IsCheap ? "🏷️" : "")</td>
                 <td>@p.Category?.Name</td>
                 <td>@p.Variants.Count</td>
                 <td>@(p.IsActive ? "Đang bán" : "Ngừng bán")</td>

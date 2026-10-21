@@ -65,7 +65,7 @@
                         @foreach (var item in Model.Cart.Items)
                         {
                             <div class="d-flex justify-content-between">
-                                <span>@item.ProductVariant.Product.Name (@item.ProductVariant.PackagingSpec) x@item.Quantity</span>
+                                <span>@item.ProductVariant.Product.Name (@item.ProductVariant.PackagingSpec) x@(item.Quantity)</span>
                                 <span>@((item.Quantity * item.ProductVariant.EffectivePrice).ToString("N0"))đ</span>
                             </div>
                         }

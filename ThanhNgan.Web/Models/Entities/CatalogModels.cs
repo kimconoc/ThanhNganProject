@@ -35,6 +35,7 @@ public class Product
     public string? ExpiryInfo { get; set; } // hạn sử dụng (mắm cá cơm)
     public bool IsFeatured { get; set; }
     public bool IsNew { get; set; }
+    public bool IsCheap { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

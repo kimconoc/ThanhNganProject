@@ -17,9 +17,9 @@
         {
             <div class="col-md-4 mb-3">
                 <a asp-controller="Shop" asp-action="Index" asp-route-categorySlug="@cat.Slug" class="text-decoration-none text-dark">
-                    <div class="card category-tile p-4 shadow-sm h-100">
-                        <h4>@cat.Name</h4>
-                        <p class="text-muted small">@cat.Description</p>
+                    <div class="card category-tile p-3 shadow-sm h-100">
+                        <h5>@cat.Name</h5>
+                        <p class="text-muted small mb-0">@cat.Description</p>
                     </div>
                 </a>
             </div>
@@ -47,6 +47,14 @@
         <h3 class="section-title mb-3 mt-4">Sản phẩm giá rẻ</h3>
         <div class="row">
             @foreach (var p in Model.CheapProducts) { <partial name="_ProductCard" model="p" /> }
+        </div>
+    }
+
+    @if (Model.NewestProducts.Count > 0)
+    {
+        <h3 class="section-title mb-3 mt-4">Tất cả sản phẩm</h3>
+        <div class="row">
+            @foreach (var p in Model.NewestProducts) { <partial name="_ProductCard" model="p" /> }
         </div>
     }
 

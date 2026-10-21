@@ -6,8 +6,12 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = !string.IsNullOrWhiteSpace(currentUser?.FullName)
+        ? currentUser.FullName
+        : User.Identity!.Name!.Split('@')[0];
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">Xin chào, @User.Identity!.Name</a>
+        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">Xin chào, @displayName</a>
         <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">Thông tin tài khoản</a></li>
             <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Addresses">Sổ địa chỉ</a></li>
