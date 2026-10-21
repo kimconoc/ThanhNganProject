@@ -1,0 +1,20 @@
+@model List<ShrinkageRow>
+@{ ViewData["Title"] = "Báo cáo hao hụt"; }
+<h2 class="mb-3">Báo cáo hao hụt (hàng hủy/hỏng/hết hạn)</h2>
+<partial name="_ReportsNav" />
+<form method="get" class="d-flex gap-2 mb-4 align-items-end">
+    <div><label class="form-label">Từ ngày</label><input type="date" name="from" value="@(((DateTime)ViewBag.From).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <div><label class="form-label">Đến ngày</label><input type="date" name="to" value="@(((DateTime)ViewBag.To).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <button class="btn btn-primary">Xem</button>
+</form>
+
+<table class="table bg-white table-sm">
+    <thead><tr><th>Ngày</th><th>Mã phiếu</th><th>Sản phẩm</th><th>Số lượng</th><th>Giá trị thiệt hại</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr><td>@r.Date.ToString("dd/MM/yyyy")</td><td>@r.ReceiptCode</td><td>@r.ProductName</td><td>@r.Quantity</td><td class="text-danger">@r.Value.ToString("N0")đ</td><td>@r.Note</td></tr>
+        }
+    </tbody>
+    <tfoot><tr><th colspan="4" class="text-end">Tổng thiệt hại</th><th class="text-danger">@Model.Sum(r => r.Value).ToString("N0")đ</th><th></th></tr></tfoot>
+</table>

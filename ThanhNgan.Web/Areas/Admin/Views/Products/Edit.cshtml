@@ -1,0 +1,123 @@
+@model Product
+@{ ViewData["Title"] = "Sửa sản phẩm"; }
+<h2>Sửa sản phẩm: @Model.Name</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="mb-3"><label class="form-label">Tên sản phẩm</label><input asp-for="Name" class="form-control" /></div>
+            <div class="mb-3"><label class="form-label">Slug (URL)</label><input asp-for="Slug" class="form-control" /></div>
+            <div class="mb-3">
+                <label class="form-label">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select">
+                    @foreach (var c in (List<Category>)ViewBag.Categories)
+                    {
+                        <option value="@c.Id">@(c.ParentCategoryId != null ? "— " : "")@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3"><label class="form-label">Mô tả</label><textarea asp-for="Description" class="form-control"></textarea></div>
+            <div class="mb-3"><label class="form-label">Nguồn gốc xuất xứ</label><input asp-for="Origin" class="form-control" /></div>
+            <div class="mb-3"><label class="form-label">Hướng dẫn bảo quản</label><input asp-for="PreservationInstructions" class="form-control" /></div>
+            <div class="mb-3"><label class="form-label">Thông tin hạn sử dụng</label><input asp-for="ExpiryInfo" class="form-control" /></div>
+            <div class="form-check"><input asp-for="IsFeatured" class="form-check-input" /><label class="form-check-label">Sản phẩm nổi bật</label></div>
+            <div class="form-check"><input asp-for="IsNew" class="form-check-input" /><label class="form-check-label">Sản phẩm mới</label></div>
+            <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" /><label class="form-check-label">Đang bán</label></div>
+            <button class="btn btn-primary">Lưu thay đổi</button>
+            <a asp-action="Index" class="btn btn-secondary">Danh sách sản phẩm</a>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6>Biến thể (quy cách đóng gói)</h6>
+                <table class="table table-sm">
+                    @{ var variantsWithHistory = (HashSet<int>)ViewBag.VariantsWithHistory; }
+                    @foreach (var v in Model.Variants)
+                    {
+                        var hasHistory = variantsWithHistory.Contains(v.Id);
+                        <tr class="@(v.IsActive ? "" : "text-muted")">
+                            <td style="min-width:220px">
+                                @(v.IsActive ? "" : v.Price <= 0 ? "(chưa có giá, đang ẩn) " : "(đã ẩn) ")
+                                <form asp-action="EditVariant" method="post" class="d-flex flex-wrap gap-1 mt-1">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@v.Id" />
+                                    <input type="hidden" name="productId" value="@Model.Id" />
+                                    <input name="packagingSpec" value="@v.PackagingSpec" class="form-control form-control-sm" style="width:100px" required />
+                                    <input name="sku" value="@v.Sku" class="form-control form-control-sm" style="width:100px" required />
+                                    <input name="price" type="number" step="1000" value="@v.Price" class="form-control form-control-sm" style="width:100px" required />
+                                    <input name="salePrice" type="number" step="1000" value="@v.SalePrice" placeholder="Giá KM" class="form-control form-control-sm" style="width:100px" />
+                                    <button class="btn btn-sm btn-outline-primary">Lưu</button>
+                                </form>
+                            </td>
+                            <td>Tồn: @v.StockQuantity</td>
+                            <td class="text-nowrap">
+                                <form asp-action="ToggleVariantActive" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@v.Id" />
+                                    <input type="hidden" name="productId" value="@Model.Id" />
+                                    <button class="btn btn-sm btn-outline-secondary">@(v.IsActive ? "Ẩn" : "Hiện")</button>
+                                </form>
+                                @if (hasHistory)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-danger" disabled title="Đã có lịch sử nhập/xuất hoặc đơn hàng, không thể xóa — dùng nút Ẩn">x</button>
+                                }
+                                else
+                                {
+                                    <form asp-action="DeleteVariant" method="post" class="d-inline" onsubmit="return confirm('Xóa biến thể này?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@v.Id" />
+                                        <input type="hidden" name="productId" value="@Model.Id" />
+                                        <button class="btn btn-sm btn-outline-danger">x</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <form asp-action="AddVariant" method="post" class="row g-1">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="col-12"><input name="packagingSpec" class="form-control form-control-sm" placeholder="Quy cách (vd: 500g)" required /></div>
+                    <div class="col-12"><input name="sku" class="form-control form-control-sm" placeholder="Mã SKU" required /></div>
+                    <div class="col-6"><input name="price" type="number" step="1000" min="0" class="form-control form-control-sm" placeholder="Giá bán (để trống nếu chưa có)" /></div>
+                    <div class="col-6"><input name="salePrice" type="number" step="1000" class="form-control form-control-sm" placeholder="Giá KM (nếu có)" /></div>
+                    <div class="col-12"><button class="btn btn-sm btn-outline-primary w-100">+ Thêm biến thể</button></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h6>Hình ảnh</h6>
+                @foreach (var img in Model.Images)
+                {
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <img src="@img.ImageUrl" style="width:40px;height:40px;object-fit:cover" />
+                        <span class="small text-truncate flex-grow-1">@img.ImageUrl @(img.IsMain ? "(ảnh chính)" : "")</span>
+                        <form asp-action="DeleteImage" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@img.Id" />
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button class="btn btn-sm btn-outline-danger">x</button>
+                        </form>
+                    </div>
+                }
+                <form asp-action="AddImage" method="post" enctype="multipart/form-data" class="row g-1 mt-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="col-12"><input type="file" name="imageFile" accept="image/*" class="form-control form-control-sm" required /></div>
+                    <div class="col-12 form-check">
+                        <input type="checkbox" name="isMain" value="true" class="form-check-input" id="isMainImg" />
+                        <label class="form-check-label small" for="isMainImg">Đặt làm ảnh chính</label>
+                    </div>
+                    <div class="col-12"><button class="btn btn-sm btn-outline-primary w-100">+ Thêm ảnh</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

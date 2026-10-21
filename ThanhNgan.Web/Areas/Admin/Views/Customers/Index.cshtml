@@ -1,0 +1,23 @@
+@model List<ApplicationUser>
+@{ ViewData["Title"] = "Khách hàng"; }
+<h2 class="mb-3">Khách hàng</h2>
+<div class="mb-3 d-flex gap-2">
+    <a asp-action="Index" class="btn btn-sm @(ViewBag.GroupFilter == null ? "btn-primary" : "btn-outline-secondary")">Tất cả</a>
+    @foreach (var g in Enum.GetValues<CustomerGroup>())
+    {
+        <a asp-action="Index" asp-route-group="@g" class="btn btn-sm @(Equals(ViewBag.GroupFilter, g) ? "btn-primary" : "btn-outline-secondary")">@g.ToDisplay()</a>
+    }
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Nhóm</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.FullName</td><td>@u.Email</td><td>@u.PhoneNumber</td>
+                <td><span class="badge bg-secondary">@u.CustomerGroup.ToDisplay()</span></td>
+                <td><a asp-action="Details" asp-route-id="@u.Id" class="btn btn-sm btn-outline-primary">Xem</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

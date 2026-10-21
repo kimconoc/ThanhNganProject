@@ -1,0 +1,17 @@
+@model Order
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+    var paymentMsg = TempData["PaymentMessage"] as string;
+}
+
+<div class="container my-5 text-center">
+    <h2 class="text-success">✅ Đặt hàng thành công!</h2>
+    <p>Mã đơn hàng của bạn: <strong>@Model.Code</strong></p>
+    @if (!string.IsNullOrEmpty(paymentMsg))
+    {
+        <div class="alert alert-info d-inline-block">@paymentMsg</div>
+    }
+    <p>Tổng tiền: <strong>@Model.TotalAmount.ToString("N0")đ</strong></p>
+    <p>Chúng tôi sẽ liên hệ số điện thoại @Model.RecipientPhone để xác nhận đơn hàng.</p>
+    <a asp-controller="Shop" asp-action="Index" class="btn btn-primary">Tiếp tục mua sắm</a>
+</div>

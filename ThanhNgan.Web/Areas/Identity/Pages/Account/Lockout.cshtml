@@ -1,0 +1,12 @@
+﻿@page
+@model LockoutModel
+@{
+    ViewData["Title"] = "Tài khoản bị khóa";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card text-center">
+        <h1 class="text-danger">@ViewData["Title"]</h1>
+        <p class="text-danger mb-0">Tài khoản này đã tạm bị khóa do đăng nhập sai quá nhiều lần, vui lòng thử lại sau.</p>
+    </div>
+</div>

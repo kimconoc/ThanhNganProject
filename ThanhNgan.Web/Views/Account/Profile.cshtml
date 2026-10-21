@@ -1,0 +1,16 @@
+@model ApplicationUser
+@{ ViewData["Title"] = "Thông tin tài khoản"; }
+<div class="container my-4">
+    <h2 class="mb-4">Thông tin tài khoản</h2>
+    @if (TempData["ProfileSaved"] != null)
+    {
+        <div class="alert alert-success">Đã lưu thông tin.</div>
+    }
+    <form asp-action="Profile" method="post" class="col-md-6">
+        @Html.AntiForgeryToken()
+        <div class="mb-3"><label class="form-label">Email</label><input class="form-control" value="@Model.Email" disabled /></div>
+        <div class="mb-3"><label class="form-label">Họ tên</label><input name="fullName" class="form-control" value="@Model.FullName" required /></div>
+        <div class="mb-3"><label class="form-label">Số điện thoại</label><input name="phoneNumber" class="form-control" value="@Model.PhoneNumber" /></div>
+        <button class="btn btn-primary">Lưu thay đổi</button>
+    </form>
+</div>

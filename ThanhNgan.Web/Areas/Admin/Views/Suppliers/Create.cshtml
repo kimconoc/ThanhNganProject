@@ -1,0 +1,14 @@
+@model Supplier
+@{ ViewData["Title"] = "Thêm nhà cung cấp"; }
+<h2>Thêm nhà cung cấp</h2>
+<form asp-action="Create" method="post" class="col-md-6">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Tên (ngư dân/vựa/cơ sở làm mắm...)</label><input asp-for="Name" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Người liên hệ</label><input asp-for="ContactName" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Số điện thoại</label><input asp-for="Phone" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Địa chỉ</label><input asp-for="Address" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Ghi chú</label><textarea asp-for="Note" class="form-control"></textarea></div>
+    <button class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

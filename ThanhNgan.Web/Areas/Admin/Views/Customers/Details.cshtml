@@ -1,0 +1,38 @@
+@model ApplicationUser
+@{
+    ViewData["Title"] = Model.FullName;
+    var orders = (List<Order>)ViewBag.Orders;
+}
+<h2>@Model.FullName</h2>
+<p>Email: @Model.Email | SĐT: @Model.PhoneNumber</p>
+<p>Tổng chi tiêu (đơn hoàn thành): <strong>@(((decimal)ViewBag.TotalSpent).ToString("N0"))đ</strong></p>
+
+<form asp-action="UpdateGroupAndNote" method="post" class="row g-2 mb-4">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="col-md-3">
+        <label class="form-label">Phân nhóm khách hàng</label>
+        <select name="customerGroup" class="form-select">
+            @foreach (var g in Enum.GetValues<CustomerGroup>())
+            {
+                <option value="@((int)g)" selected="@(g == Model.CustomerGroup)">@g.ToDisplay()</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-7">
+        <label class="form-label">Ghi chú chăm sóc khách hàng</label>
+        <input name="careNote" value="@Model.CareNote" class="form-control" />
+    </div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Lưu</button></div>
+</form>
+
+<h5>Lịch sử mua hàng</h5>
+<table class="table bg-white">
+    <thead><tr><th>Mã đơn</th><th>Ngày</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+    <tbody>
+        @foreach (var o in orders)
+        {
+            <tr><td>@o.Code</td><td>@o.CreatedAt.ToString("dd/MM/yyyy")</td><td>@o.TotalAmount.ToString("N0")đ</td><td>@o.Status.ToDisplay()</td></tr>
+        }
+    </tbody>
+</table>

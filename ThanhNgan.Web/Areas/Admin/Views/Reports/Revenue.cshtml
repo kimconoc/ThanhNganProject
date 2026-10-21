@@ -1,0 +1,50 @@
+@model List<RevenuePoint>
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+    var categoryRevenue = (List<CategoryRevenue>)ViewBag.CategoryRevenue;
+}
+<h2 class="mb-3">Báo cáo doanh thu</h2>
+<partial name="_ReportsNav" />
+
+<form method="get" class="d-flex gap-2 mb-4 align-items-end">
+    <div><label class="form-label">Từ ngày</label><input type="date" name="from" value="@(((DateTime)ViewBag.From).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <div><label class="form-label">Đến ngày</label><input type="date" name="to" value="@(((DateTime)ViewBag.To).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <div>
+        <label class="form-label">Nhóm theo</label>
+        <select name="groupBy" class="form-select">
+            <option value="day" selected="@(ViewBag.GroupBy == "day")">Ngày</option>
+            <option value="month" selected="@(ViewBag.GroupBy == "month")">Tháng</option>
+            <option value="quarter" selected="@(ViewBag.GroupBy == "quarter")">Quý</option>
+            <option value="year" selected="@(ViewBag.GroupBy == "year")">Năm</option>
+        </select>
+    </div>
+    <button class="btn btn-primary">Xem</button>
+</form>
+
+<div class="row">
+    <div class="col-md-7">
+        <h5>Doanh thu theo kỳ</h5>
+        <table class="table bg-white table-sm">
+            <thead><tr><th>Kỳ</th><th>Số đơn</th><th>Doanh thu</th></tr></thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr><td>@p.Period</td><td>@p.OrderCount</td><td>@p.Revenue.ToString("N0")đ</td></tr>
+                }
+            </tbody>
+            <tfoot><tr><th>Tổng</th><th>@Model.Sum(p => p.OrderCount)</th><th>@Model.Sum(p => p.Revenue).ToString("N0")đ</th></tr></tfoot>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <h5>Doanh thu theo nhóm hàng</h5>
+        <table class="table bg-white table-sm">
+            <thead><tr><th>Nhóm hàng</th><th>Doanh thu</th></tr></thead>
+            <tbody>
+                @foreach (var c in categoryRevenue)
+                {
+                    <tr><td>@c.CategoryName</td><td>@c.Revenue.ToString("N0")đ</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

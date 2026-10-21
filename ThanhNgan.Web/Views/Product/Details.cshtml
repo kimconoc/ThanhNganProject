@@ -1,0 +1,126 @@
+@model ProductDetailViewModel
+@{
+    ViewData["Title"] = Model.Product.Name;
+    var p = Model.Product;
+    var images = p.Images.OrderByDescending(i => i.IsMain).ThenBy(i => i.DisplayOrder).ToList();
+    var activeVariants = p.Variants.Where(v => v.IsActive).ToList();
+}
+
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-5">
+            <img id="main-product-image" src="@(images.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png")" class="img-fluid rounded mb-2" alt="@p.Name" />
+            <div class="d-flex gap-2 flex-wrap">
+                @foreach (var img in images)
+                {
+                    <img src="@img.ImageUrl" style="width:70px;height:70px;object-fit:cover;cursor:pointer;" class="rounded border thumb-product-image" onclick="document.getElementById('main-product-image').src=this.src" />
+                }
+            </div>
+        </div>
+        <div class="col-md-7">
+            <h2>@p.Name</h2>
+            <p class="text-muted">
+                @if (Model.ReviewCount > 0)
+                {
+                    <span>⭐ @Model.AverageRating.ToString("0.0") (@Model.ReviewCount đánh giá)</span>
+                }
+                else
+                {
+                    <span>Chưa có đánh giá</span>
+                }
+            </p>
+            @if (!string.IsNullOrEmpty(p.Origin)) { <p><strong>Nguồn gốc:</strong> @p.Origin</p> }
+            <p>@p.Description</p>
+
+            @if (activeVariants.Count > 0)
+            {
+                <form asp-controller="Cart" asp-action="Add" method="post" id="variant-form">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Quy cách</label>
+                        <div class="btn-group d-flex flex-wrap gap-2" role="group">
+                            @foreach (var v in activeVariants)
+                            {
+                                <label class="btn btn-outline-primary @(v == activeVariants.First() ? "active" : "")">
+                                    <input type="radio" name="variantId" value="@v.Id" autocomplete="off" class="d-none variant-radio"
+                                           data-price="@v.EffectivePrice" @(v == activeVariants.First() ? "checked" : "") />
+                                    @v.PackagingSpec — @v.EffectivePrice.ToString("N0")đ @(v.StockQuantity <= 0 ? "(hết hàng)" : "")
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <h3 id="selected-price" class="product-price">@activeVariants.First().EffectivePrice.ToString("N0")đ</h3>
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="number" name="quantity" value="1" min="1" class="form-control" style="width:100px" />
+                        <button type="submit" name="redirectTo" value="cart" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                        <button type="submit" name="redirectTo" value="checkout" class="btn btn-danger">Mua ngay</button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <p class="text-muted">Sản phẩm hiện tạm ngừng kinh doanh.</p>
+            }
+
+            @if (!string.IsNullOrEmpty(p.PreservationInstructions))
+            {
+                <p><strong>Bảo quản:</strong> @p.PreservationInstructions</p>
+            }
+            @if (!string.IsNullOrEmpty(p.ExpiryInfo))
+            {
+                <p><strong>Hạn sử dụng:</strong> @p.ExpiryInfo</p>
+            }
+        </div>
+    </div>
+
+    @if (Model.RelatedProducts.Count > 0)
+    {
+        <h4 class="mt-5">Sản phẩm liên quan</h4>
+        <div class="row">
+            @foreach (var rp in Model.RelatedProducts) { <partial name="_ProductCard" model="rp.ToCard()" /> }
+        </div>
+    }
+
+    <h4 class="mt-5">Đánh giá sản phẩm</h4>
+    @foreach (var r in p.Reviews)
+    {
+        <div class="border-bottom py-2">
+            <strong>@(r.User?.FullName ?? "Khách hàng")</strong> — ⭐ @r.Rating
+            <p class="mb-0">@r.Comment</p>
+        </div>
+    }
+    @if (Model.CanReview)
+    {
+        <form asp-controller="Product" asp-action="AddReview" method="post" class="mt-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productId" value="@p.Id" />
+            <div class="mb-2">
+                <select name="rating" class="form-select" style="width:150px">
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+            </div>
+            <textarea name="comment" class="form-control mb-2" placeholder="Nhận xét của bạn..."></textarea>
+            <button type="submit" class="btn btn-outline-primary">Gửi đánh giá</button>
+        </form>
+    }
+    else if (User.Identity?.IsAuthenticated != true)
+    {
+        <p class="text-muted">Đăng nhập và mua hàng để viết đánh giá.</p>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.variant-radio').forEach(r => {
+            r.addEventListener('change', function () {
+                document.getElementById('selected-price').textContent =
+                    Number(this.dataset.price).toLocaleString('vi-VN') + 'đ';
+                document.querySelectorAll('.variant-radio').forEach(x => x.closest('label').classList.toggle('active', x.checked));
+            });
+        });
+    </script>
+}

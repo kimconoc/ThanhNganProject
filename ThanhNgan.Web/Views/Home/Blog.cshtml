@@ -1,0 +1,24 @@
+@model List<BlogPost>
+@{ ViewData["Title"] = "Cẩm nang chế biến hải sản"; }
+<div class="container my-4">
+    <h2 class="mb-4">Cẩm nang chế biến hải sản</h2>
+    <div class="row">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <a asp-action="BlogDetail" asp-route-slug="@post.Slug" class="text-decoration-none text-dark">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(post.ImageUrl))
+                        {
+                            <img src="@post.ImageUrl" class="card-img-top" style="height:160px;object-fit:cover" />
+                        }
+                        <div class="card-body">
+                            <h6>@post.Title</h6>
+                            <p class="small text-muted">@post.Summary</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

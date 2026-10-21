@@ -1,0 +1,39 @@
+@model List<BestSellerRow>
+@{
+    ViewData["Title"] = "Sản phẩm bán chạy";
+    var slowMoving = (List<ProductVariant>)ViewBag.SlowMoving;
+}
+<h2 class="mb-3">Sản phẩm bán chạy / tồn kho lâu</h2>
+<partial name="_ReportsNav" />
+<form method="get" class="d-flex gap-2 mb-4 align-items-end">
+    <div><label class="form-label">Từ ngày</label><input type="date" name="from" value="@(((DateTime)ViewBag.From).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <div><label class="form-label">Đến ngày</label><input type="date" name="to" value="@(((DateTime)ViewBag.To).ToString("yyyy-MM-dd"))" class="form-control" /></div>
+    <button class="btn btn-primary">Xem</button>
+</form>
+
+<div class="row">
+    <div class="col-md-6">
+        <h5>🔥 Bán chạy nhất</h5>
+        <table class="table bg-white table-sm">
+            <thead><tr><th>Sản phẩm</th><th>SL bán</th><th>Doanh thu</th></tr></thead>
+            <tbody>
+                @foreach (var b in Model)
+                {
+                    <tr><td>@b.ProductName (@b.PackagingSpec)</td><td>@b.QuantitySold</td><td>@b.Revenue.ToString("N0")đ</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <h5>📦 Tồn kho nhiều (có thể bán chậm)</h5>
+        <table class="table bg-white table-sm">
+            <thead><tr><th>Sản phẩm</th><th>Tồn kho</th></tr></thead>
+            <tbody>
+                @foreach (var v in slowMoving)
+                {
+                    <tr><td>@v.Product.Name (@v.PackagingSpec)</td><td>@v.StockQuantity</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

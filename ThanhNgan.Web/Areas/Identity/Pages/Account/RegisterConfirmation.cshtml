@@ -1,0 +1,22 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Xác nhận đăng ký";
+}
+
+<h1>@ViewData["Title"]</h1>
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+<p>
+    Hệ thống chưa cấu hình gửi email thật (xem <code>Services/LoggingEmailSender.cs</code>).
+    Bình thường link này sẽ được gửi qua email: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Bấm vào đây để xác nhận tài khoản</a>
+</p>
+    }
+    else
+    {
+<p>
+        Vui lòng kiểm tra email để xác nhận tài khoản.
+</p>
+    }
+}

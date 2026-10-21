@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Cấu hình hệ thống";
+    var shippingMethods = (List<ShippingMethod>)ViewBag.ShippingMethods;
+    var pages = (List<StaticPage>)ViewBag.StaticPages;
+    var pageSlugs = new[] { "gioi-thieu", "chinh-sach-giao-hang", "chinh-sach-doi-tra" };
+    var contact = ((string Hotline, string Zalo, string Email))ViewBag.Contact;
+}
+<h2 class="mb-4">Cấu hình hệ thống</h2>
+
+<div class="card p-3 mb-4">
+    <h5>Thông tin liên hệ (hiển thị ở header/footer/trang Liên hệ)</h5>
+    <form asp-action="SaveContact" method="post" class="row g-2 align-items-end">
+        @Html.AntiForgeryToken()
+        <div class="col-md-3">
+            <label class="form-label small">Hotline</label>
+            <input name="hotline" value="@contact.Hotline" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Zalo</label>
+            <input name="zalo" value="@contact.Zalo" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Email</label>
+            <input name="email" value="@contact.Email" type="email" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-sm btn-outline-primary">Lưu</button>
+        </div>
+    </form>
+</div>
+
+<div class="card p-3 mb-4">
+    <h5>Phương thức giao hàng &amp; phí ship</h5>
+    <div class="row fw-bold small text-muted border-bottom pb-1 mb-1">
+        <div class="col-md-4">Tên</div><div class="col-md-2">Loại</div><div class="col-md-2">Phí</div><div class="col-md-4">Hoạt động</div>
+    </div>
+    @foreach (var s in shippingMethods)
+    {
+        <form asp-action="SaveShippingMethod" method="post" class="row align-items-center mb-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@s.Id" />
+            <input type="hidden" name="Type" value="@((int)s.Type)" />
+            <div class="col-md-4"><input name="Name" value="@s.Name" class="form-control form-control-sm" /></div>
+            <div class="col-md-2">@s.Type.ToDisplay()</div>
+            <div class="col-md-2"><input name="Fee" value="@s.Fee" type="number" class="form-control form-control-sm" /></div>
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                <input type="hidden" name="IsActive" value="false" />
+                <input type="checkbox" name="IsActive" value="true" checked="@s.IsActive" />
+                <button class="btn btn-sm btn-outline-primary">Lưu</button>
+            </div>
+        </form>
+    }
+</div>
+
+<div class="card p-3 mb-4">
+    <h5>Cổng thanh toán</h5>
+    <p class="text-muted small">COD và Chuyển khoản ngân hàng đang hoạt động. Momo/VNPay/ZaloPay cấu hình API key trong <code>appsettings.json</code> (mục <code>PaymentGateways</code>) khi có thông tin merchant.</p>
+</div>
+
+<div class="card p-3">
+    <h5>Nội dung trang tĩnh</h5>
+    <ul>
+        @foreach (var slug in pageSlugs)
+        {
+            <li><a asp-action="EditPage" asp-route-slug="@slug">@slug</a></li>
+        }
+    </ul>
+</div>

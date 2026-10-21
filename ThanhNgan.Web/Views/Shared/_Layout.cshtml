@@ -1,0 +1,143 @@
+﻿@inject ThanhNgan.Web.Data.ApplicationDbContext Db
+@{ var contact = await ThanhNgan.Web.Data.ContactSettings.GetAsync(Db); }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Thanh Ngân Seafood</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <div class="top-bar text-white py-1">
+            <div class="container d-flex justify-content-between flex-wrap">
+                <span class="top-bar-hotline">📞 Hotline: <a href="tel:@contact.Hotline.Replace(" ", "")">@contact.Hotline</a> &nbsp;|&nbsp; Zalo: <a href="tel:@contact.Zalo.Replace(" ", "")">@contact.Zalo</a></span>
+                <span>🚚 Giao hàng nội thành &amp; giao tỉnh xe lạnh toàn quốc</span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg main-navbar border-bottom shadow-sm py-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-3" asp-area="" asp-controller="Home" asp-action="Index">🦐 Thanh Ngân</a>
+                <div class="d-flex d-lg-none align-items-center gap-2">
+                    <a class="btn btn-cart btn-sm position-relative" asp-area="" asp-controller="Cart" asp-action="Index">
+                        🛒
+                        <span class="cart-count-badge badge bg-danger rounded-pill">0</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+                <form class="d-flex d-lg-none w-100 mt-2 order-3" asp-area="" asp-controller="Shop" asp-action="Index" method="get">
+                    <input class="form-control form-control-sm" type="search" name="keyword" placeholder="Tìm sản phẩm..." />
+                </form>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="hai-san-dong-lanh">Hải sản đông lạnh</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="hai-san-tuoi-song">Hải sản tươi sống</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="mam-ca-com">Mắm cá cơm</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Blog">Cẩm nang</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="gioi-thieu">Giới thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
+                    </ul>
+                    <form class="d-none d-lg-flex me-3" asp-area="" asp-controller="Shop" asp-action="Index" method="get">
+                        <input class="form-control form-control-sm" type="search" name="keyword" placeholder="Tìm sản phẩm..." />
+                    </form>
+                    <a class="btn btn-cart btn-sm me-3 position-relative" asp-area="" asp-controller="Cart" asp-action="Index">
+                        🛒 Giỏ hàng
+                        <span class="cart-count-badge badge bg-danger rounded-pill">0</span>
+                    </a>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+        <div class="service-strip">
+            <div class="container">
+                <div class="row text-center text-md-start">
+                    <div class="col-6 col-md-3 service-item">
+                        <span class="icon">🚚</span>
+                        <div><div class="title">Giao hàng nhanh</div><div class="subtitle">Nội thành trong 2 giờ</div></div>
+                    </div>
+                    <div class="col-6 col-md-3 service-item">
+                        <span class="icon">❄️</span>
+                        <div><div class="title">Xe lạnh toàn quốc</div><div class="subtitle">Giữ trọn độ tươi ngon</div></div>
+                    </div>
+                    <div class="col-6 col-md-3 service-item">
+                        <span class="icon">↩️</span>
+                        <div><div class="title">Đổi trả dễ dàng</div><div class="subtitle">Hàng không đạt chuẩn</div></div>
+                    </div>
+                    <div class="col-6 col-md-3 service-item">
+                        <span class="icon">✅</span>
+                        <div><div class="title">Cam kết chất lượng</div><div class="subtitle">Nguồn gốc rõ ràng</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @{
+        var cartMsg = TempData["CartMessage"] as string;
+    }
+    @if (!string.IsNullOrEmpty(cartMsg))
+    {
+        <div class="alert alert-success text-center mb-0 rounded-0">@cartMsg</div>
+    }
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer text-white mt-5">
+        <div class="container pt-4 pb-3">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <a class="footer-brand" asp-area="" asp-controller="Home" asp-action="Index">🦐 Thanh Ngân Seafood</a>
+                    <p class="small text-white-50 mt-2">Chuyên hải sản đông lạnh, tươi sống và mắm cá cơm chất lượng, giao tận nơi.</p>
+                    <ul class="list-unstyled small text-white-50 footer-commit-list">
+                        <li>🚚 Giao hàng nhanh trong 2 giờ</li>
+                        <li>❄️ Xe lạnh toàn quốc</li>
+                        <li>↩️ Đổi trả dễ dàng</li>
+                        <li>✅ Cam kết chất lượng</li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3 mb-4">
+                    <h6 class="footer-heading">Danh mục</h6>
+                    <ul class="list-unstyled small">
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="hai-san-dong-lanh">Hải sản đông lạnh</a></li>
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="hai-san-tuoi-song">Hải sản tươi sống</a></li>
+                        <li><a asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="mam-ca-com">Mắm cá cơm</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Blog">Cẩm nang</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3 mb-4">
+                    <h6 class="footer-heading">Chính sách</h6>
+                    <ul class="list-unstyled small">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="chinh-sach-giao-hang">Chính sách giao hàng</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="chinh-sach-doi-tra">Chính sách đổi trả</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Faq">Câu hỏi thường gặp</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="gioi-thieu">Giới thiệu</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="footer-heading">Liên hệ</h6>
+                    <ul class="list-unstyled small text-white-50 footer-contact-list">
+                        <li><span>📞</span> @contact.Hotline</li>
+                        <li><span>💬</span> Zalo: @contact.Zalo</li>
+                        <li><span>✉️</span> @contact.Email</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center small text-white-50 border-top border-secondary py-2">
+            &copy; @DateTime.Now.Year - Thanh Ngân Seafood
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,51 @@
+@model Cart
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var total = Model.Items.Sum(i => i.Quantity * i.ProductVariant.EffectivePrice);
+}
+
+<div class="container my-4">
+    <h2 class="mb-4">Giỏ hàng của bạn</h2>
+
+    @if (Model.Items.Count == 0)
+    {
+        <p>Giỏ hàng trống. <a asp-controller="Shop" asp-action="Index">Tiếp tục mua sắm</a></p>
+    }
+    else
+    {
+        <table class="table align-middle">
+            <thead>
+                <tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ProductVariant.Product.Name (@item.ProductVariant.PackagingSpec)</td>
+                        <td>@item.ProductVariant.EffectivePrice.ToString("N0")đ</td>
+                        <td style="width:140px">
+                            <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-flex gap-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control form-control-sm" />
+                                <button class="btn btn-sm btn-outline-secondary">Cập nhật</button>
+                            </form>
+                        </td>
+                        <td>@((item.Quantity * item.ProductVariant.EffectivePrice).ToString("N0"))đ</td>
+                        <td>
+                            <form asp-controller="Cart" asp-action="Remove" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                <button class="btn btn-sm btn-outline-danger">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Tổng cộng: @total.ToString("N0")đ</h4>
+            <a asp-controller="Checkout" asp-action="Index" class="btn btn-primary btn-lg">Tiến hành đặt hàng</a>
+        </div>
+    }
+</div>

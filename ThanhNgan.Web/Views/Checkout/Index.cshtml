@@ -1,0 +1,90 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Đặt hàng";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4">Thông tin đặt hàng</h2>
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <form asp-action="PlaceOrder" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-7">
+                <div class="mb-3">
+                    <label class="form-label">Họ tên người nhận</label>
+                    <input asp-for="RecipientName" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại</label>
+                    <input asp-for="RecipientPhone" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Địa chỉ giao hàng</label>
+                    <textarea asp-for="ShippingAddress" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phương thức giao hàng</label>
+                    @foreach (var sm in Model.ShippingMethods)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ShippingMethodId" value="@sm.Id" @(sm.Id == Model.ShippingMethodId ? "checked" : "") />
+                            <label class="form-check-label">@sm.Name (@sm.Fee.ToString("N0")đ)</label>
+                        </div>
+                    }
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phương thức thanh toán</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" value="@((int)PaymentMethod.Cod)" checked />
+                        <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" value="@((int)PaymentMethod.BankTransfer)" />
+                        <label class="form-check-label">Chuyển khoản ngân hàng</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" value="@((int)PaymentMethod.Momo)" disabled />
+                        <label class="form-check-label text-muted">Ví Momo (sắp ra mắt)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" value="@((int)PaymentMethod.VnPay)" disabled />
+                        <label class="form-check-label text-muted">VNPay (sắp ra mắt)</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea asp-for="Note" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Đơn hàng của bạn</h5>
+                        @foreach (var item in Model.Cart.Items)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <span>@item.ProductVariant.Product.Name (@item.ProductVariant.PackagingSpec) x@item.Quantity</span>
+                                <span>@((item.Quantity * item.ProductVariant.EffectivePrice).ToString("N0"))đ</span>
+                            </div>
+                        }
+                        <hr />
+                        <div class="input-group mb-2">
+                            <input type="text" name="CouponCode" class="form-control" placeholder="Mã giảm giá" />
+                            <button type="submit" class="btn btn-outline-secondary">Áp dụng</button>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.CouponError))
+                        {
+                            <p class="text-danger small">@Model.CouponError</p>
+                        }
+                        <div class="d-flex justify-content-between"><span>Tạm tính</span><span>@Model.SubTotal.ToString("N0")đ</span></div>
+                        <div class="d-flex justify-content-between"><span>Giảm giá</span><span>-@Model.DiscountAmount.ToString("N0")đ</span></div>
+                        <div class="d-flex justify-content-between fw-bold fs-5"><span>Tổng cộng</span><span>@Model.Total.ToString("N0")đ</span></div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Đặt hàng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

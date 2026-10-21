@@ -1,0 +1,21 @@
+@model List<Order>
+@{ ViewData["Title"] = "Lịch sử đơn hàng"; }
+<div class="container my-4">
+    <h2 class="mb-4">Lịch sử đơn hàng</h2>
+    <table class="table">
+        <thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.Code</td>
+                    <td>@o.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@o.TotalAmount.ToString("N0")đ</td>
+                    <td><span class="badge bg-info">@o.Status.ToDisplay()</span></td>
+                    <td><a asp-action="OrderDetail" asp-route-id="@o.Id" class="btn btn-sm btn-outline-primary">Chi tiết</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.Count == 0) { <p>Bạn chưa có đơn hàng nào.</p> }
+</div>

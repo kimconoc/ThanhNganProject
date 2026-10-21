@@ -1,0 +1,38 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Tổng quan"; }
+
+<h2 class="mb-4">Tổng quan</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Doanh thu hôm nay</div><h4>@Model.RevenueToday.ToString("N0")đ</h4></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Doanh thu tháng này</div><h4>@Model.RevenueThisMonth.ToString("N0")đ</h4></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Chờ xác nhận</div><h4>@Model.OrdersPendingConfirmation</h4></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Đang xử lý</div><h4>@Model.OrdersProcessing</h4></div></div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>⚠️ Sắp hết hàng</h5>
+            <table class="table table-sm">
+                @foreach (var v in Model.LowStockVariants)
+                {
+                    <tr><td>@v.Product.Name (@v.PackagingSpec)</td><td>Còn @v.StockQuantity</td></tr>
+                }
+            </table>
+            @if (Model.LowStockVariants.Count == 0) { <p class="text-muted">Không có sản phẩm sắp hết hàng.</p> }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>⏰ Cận hạn sử dụng (7 ngày)</h5>
+            <table class="table table-sm">
+                @foreach (var b in Model.ExpiringSoonBatches)
+                {
+                    <tr><td>@b.ProductVariant.Product.Name (@b.ProductVariant.PackagingSpec)</td><td>Lô @b.BatchCode</td><td>HSD @b.ExpiryDate?.ToString("dd/MM/yyyy")</td></tr>
+                }
+            </table>
+            @if (Model.ExpiringSoonBatches.Count == 0) { <p class="text-muted">Không có lô hàng sắp hết hạn.</p> }
+        </div>
+    </div>
+</div>

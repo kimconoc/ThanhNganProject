@@ -1,0 +1,25 @@
+@model List<Product>
+@{ ViewData["Title"] = "Sản phẩm"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Sản phẩm</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Thêm sản phẩm</a>
+</div>
+<form method="get" class="mb-3 d-flex gap-2">
+    <input type="text" name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm theo tên..." style="max-width:300px" />
+    <button class="btn btn-outline-secondary">Tìm</button>
+</form>
+<table class="table bg-white">
+    <thead><tr><th>Tên</th><th>Danh mục</th><th>Số biến thể</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Name @(p.IsFeatured ? "⭐" : "") @(p.IsNew ? "🆕" : "")</td>
+                <td>@p.Category?.Name</td>
+                <td>@p.Variants.Count</td>
+                <td>@(p.IsActive ? "Đang bán" : "Ngừng bán")</td>
+                <td><a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Sửa</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

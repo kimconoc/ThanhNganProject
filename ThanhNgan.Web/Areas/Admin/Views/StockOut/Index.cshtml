@@ -1,0 +1,32 @@
+@model List<StockOutReceipt>
+@{ ViewData["Title"] = "Phiếu xuất kho"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Phiếu xuất kho</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Tạo phiếu xuất (hủy/chuyển kho)</a>
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Mã phiếu</th><th>Loại</th><th>Ngày xuất</th><th>Số dòng</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Code</td>
+                <td>
+                    @(r.Type switch {
+                        StockOutType.Sale => "Xuất bán",
+                        StockOutType.Damage => "Hủy/hao hụt",
+                        _ => "Chuyển kho"
+                    })
+                </td>
+                <td>@r.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@r.Details.Count</td>
+                <td>
+                    @if (r.Status == DocumentStatus.PendingApproval) { <span class="badge bg-warning text-dark">Chờ duyệt</span> }
+                    else if (r.Status == DocumentStatus.Approved) { <span class="badge bg-success">Đã duyệt</span> }
+                    else { <span class="badge bg-secondary">@r.Status.ToDisplay()</span> }
+                </td>
+                <td><a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">Xem</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

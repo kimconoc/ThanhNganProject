@@ -1,0 +1,19 @@
+@model List<Supplier>
+@{ ViewData["Title"] = "Nhà cung cấp"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Nhà cung cấp</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Thêm nhà cung cấp</a>
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Tên</th><th>Người liên hệ</th><th>SĐT</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Name</td><td>@s.ContactName</td><td>@s.Phone</td>
+                <td>@(s.IsActive ? "Đang hợp tác" : "Ngừng hợp tác")</td>
+                <td><a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">Sửa</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

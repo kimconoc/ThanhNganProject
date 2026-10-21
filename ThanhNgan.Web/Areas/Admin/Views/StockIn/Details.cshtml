@@ -1,0 +1,45 @@
+@model StockInReceipt
+@{ ViewData["Title"] = "Phiếu nhập " + Model.Code; }
+<h2>Phiếu nhập @Model.Code</h2>
+<p>Nhà cung cấp: <strong>@Model.Supplier?.Name</strong> | Ngày tạo: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+<p>
+    Trạng thái:
+    @if (Model.Status == DocumentStatus.PendingApproval) { <span class="badge bg-warning text-dark">Chờ duyệt</span> }
+    else if (Model.Status == DocumentStatus.Approved) { <span class="badge bg-success">Đã duyệt</span> }
+    else { <span class="badge bg-secondary">@Model.Status.ToDisplay()</span> }
+</p>
+@if (!string.IsNullOrEmpty(Model.Note)) { <p>Ghi chú: @Model.Note</p> }
+
+<table class="table bg-white">
+    <thead><tr><th>Sản phẩm</th><th>Lô</th><th>Số lượng</th><th>Giá nhập</th><th>HSD</th><th>Thành tiền</th></tr></thead>
+    <tbody>
+        @foreach (var d in Model.Details)
+        {
+            <tr>
+                <td>@d.ProductVariant.Product.Name (@d.ProductVariant.PackagingSpec)</td>
+                <td>@d.BatchCode</td>
+                <td>@d.Quantity</td>
+                <td>@d.ImportPrice.ToString("N0")đ</td>
+                <td>@d.ExpiryDate?.ToString("dd/MM/yyyy")</td>
+                <td>@((d.Quantity * d.ImportPrice).ToString("N0"))đ</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot><tr><th colspan="5" class="text-end">Tổng giá trị</th><th>@Model.Details.Sum(d => d.Quantity * d.ImportPrice).ToString("N0")đ</th></tr></tfoot>
+</table>
+
+@if (Model.Status == DocumentStatus.PendingApproval)
+{
+    if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+    {
+        <form asp-action="Approve" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Duyệt phiếu nhập này?');">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success">✓ Duyệt phiếu (giá trị lớn)</button>
+        </form>
+    }
+    <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Hủy phiếu nhập này? Phiếu chưa duyệt nên chưa ảnh hưởng tồn kho.');">
+        @Html.AntiForgeryToken()
+        <button class="btn btn-outline-danger">✗ Hủy phiếu</button>
+    </form>
+}
+<a asp-action="Index" class="btn btn-secondary mt-2">Quay lại danh sách</a>

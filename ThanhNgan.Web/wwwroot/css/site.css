@@ -1,0 +1,303 @@
+:root {
+  --brand-navy: #0b2b4a;
+  --brand-navy-dark: #081d33;
+  --brand-accent: #ff6b35;
+  --brand-accent-dark: #e85a28;
+  --brand-price: #129fd8;
+  --brand-bg: #f7f8fa;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--brand-bg);
+  padding-top: var(--header-height, 0px);
+}
+
+html, body {
+  height: 100%;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* ===== Brand buttons ===== */
+.btn-primary, .btn-outline-primary:hover {
+  background-color: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--brand-accent-dark);
+  border-color: var(--brand-accent-dark);
+}
+.btn-outline-primary {
+  color: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+.text-primary { color: var(--brand-accent) !important; }
+.bg-primary { background-color: var(--brand-accent) !important; }
+
+/* ===== Header ===== */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+
+.top-bar {
+  background: var(--brand-navy-dark);
+  font-size: 0.85rem;
+}
+.top-bar-hotline a {
+  color: var(--brand-accent);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  display: inline-block;
+  animation: hotline-pulse 1.8s ease-in-out infinite;
+}
+.top-bar-hotline a:hover {
+  text-decoration: underline;
+}
+
+@keyframes hotline-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.main-navbar {
+  background: #fff;
+}
+.main-navbar .navbar-brand {
+  color: var(--brand-navy) !important;
+}
+.main-navbar .nav-link {
+  color: var(--brand-navy);
+  font-weight: 500;
+}
+.main-navbar .nav-link:hover,
+.main-navbar .nav-link.active {
+  color: var(--brand-accent);
+}
+.main-navbar .btn-cart {
+  background: #fff;
+  border: 1.5px solid var(--brand-accent);
+  color: var(--brand-accent);
+  border-radius: 2rem;
+  font-weight: 600;
+}
+.main-navbar .btn-cart:hover {
+  background: var(--brand-accent);
+  color: #fff;
+}
+.main-navbar form input[type="search"] {
+  border-radius: 2rem 0 0 2rem;
+}
+
+/* ===== Hero ===== */
+.hero-banner {
+  background: linear-gradient(120deg, var(--brand-navy) 0%, var(--brand-navy-dark) 100%);
+  color: #fff;
+  padding: 3.5rem 0;
+}
+.hero-banner h1 {
+  font-weight: 800;
+}
+.hero-banner .btn-light {
+  border-radius: 2rem;
+  font-weight: 700;
+  padding: 0.6rem 2rem;
+}
+
+/* ===== Service strip ===== */
+.service-strip {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.service-strip .service-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 0;
+}
+.service-strip .service-item .icon {
+  font-size: 1.6rem;
+}
+.service-strip .service-item .title {
+  font-weight: 700;
+  color: var(--brand-navy);
+  font-size: 0.9rem;
+}
+.service-strip .service-item .subtitle {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+/* ===== Section heading ===== */
+.section-title {
+  position: relative;
+  padding-left: 0.9rem;
+  font-weight: 700;
+  color: var(--brand-navy);
+  border-left: 5px solid var(--brand-accent);
+}
+
+/* ===== Category tiles ===== */
+.category-tile {
+  border: none;
+  border-radius: 0.75rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.category-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.75rem 1.5rem rgba(11, 43, 74, 0.12) !important;
+}
+.category-tile h4 {
+  color: var(--brand-navy);
+  font-weight: 700;
+}
+
+/* ===== Product card ===== */
+.product-card {
+  border: 1px solid #eee;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.75rem 1.5rem rgba(11, 43, 74, 0.12) !important;
+}
+.product-card .card-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.product-card .card-img-top {
+  transition: transform 0.25s ease;
+}
+.product-card:hover .card-img-top {
+  transform: scale(1.06);
+}
+.product-card .badge-discount {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: var(--brand-accent);
+}
+.product-card .badge-new {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+.product-card .card-title {
+  font-size: 0.92rem;
+  min-height: 2.6em;
+}
+.product-card .price-sale {
+  color: var(--brand-price);
+  font-weight: 700;
+}
+.product-card .fw-bold {
+  color: var(--brand-price);
+}
+.product-price {
+  color: var(--brand-price);
+  font-weight: 700;
+}
+.product-card .btn-add-cart {
+  border-radius: 2rem;
+  font-weight: 600;
+}
+
+/* ===== Footer ===== */
+footer.site-footer {
+  background: var(--brand-navy-dark);
+}
+footer.site-footer a {
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+}
+footer.site-footer a:hover {
+  color: var(--brand-accent);
+}
+footer.site-footer .footer-brand {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+footer.site-footer .footer-heading {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+footer.site-footer ul li {
+  margin-bottom: 0.5rem;
+}
+footer.site-footer .footer-commit-list {
+  margin-top: 1rem;
+}
+footer.site-footer .footer-commit-list li {
+  cursor: default;
+}
+footer.site-footer .footer-contact-list li {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  word-break: break-word;
+}
+
+/* Trang đăng nhập/đăng ký/quên mật khẩu */
+.auth-wrapper {
+  min-height: calc(100vh - 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+}
+
+.auth-card h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

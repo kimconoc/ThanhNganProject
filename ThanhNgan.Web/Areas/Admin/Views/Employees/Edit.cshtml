@@ -1,0 +1,21 @@
+@model ApplicationUser
+@{
+    ViewData["Title"] = "Sửa quyền nhân viên";
+    var currentRoles = (IList<string>)ViewBag.CurrentRoles;
+    var allRoles = (string[])ViewBag.AllRoles;
+}
+<h2>Sửa quyền: @Model.FullName</h2>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="col-md-6">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label class="form-label">Vai trò</label>
+        <select name="role" class="form-select">
+            @foreach (var r in allRoles)
+            {
+                <option value="@r" selected="@(currentRoles.Contains(r))">@EnumDisplay.RoleToDisplay(r)</option>
+            }
+        </select>
+    </div>
+    <button class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

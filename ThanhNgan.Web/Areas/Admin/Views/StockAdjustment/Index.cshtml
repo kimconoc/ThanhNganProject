@@ -1,0 +1,23 @@
+@model List<StockAdjustment>
+@{ ViewData["Title"] = "Kiểm kê kho"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Kiểm kê kho</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Tạo phiếu kiểm kê</a>
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Mã phiếu</th><th>Ngày tạo</th><th>Số dòng</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.Code</td><td>@a.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td><td>@a.Details.Count</td>
+                <td>
+                    @if (a.Status == DocumentStatus.PendingApproval) { <span class="badge bg-warning text-dark">Chờ duyệt</span> }
+                    else if (a.Status == DocumentStatus.Approved) { <span class="badge bg-success">Đã duyệt</span> }
+                    else { <span class="badge bg-secondary">@a.Status.ToDisplay()</span> }
+                </td>
+                <td><a asp-action="Details" asp-route-id="@a.Id" class="btn btn-sm btn-outline-primary">Xem</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

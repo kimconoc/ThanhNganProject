@@ -1,0 +1,44 @@
+@model Product
+@{ ViewData["Title"] = "Thêm sản phẩm"; }
+<h2>Thêm sản phẩm</h2>
+<form asp-action="Create" method="post" class="col-md-8">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Tên sản phẩm</label><input asp-for="Name" class="form-control" id="name-input" /></div>
+    <div class="mb-3"><label class="form-label">Slug (URL)</label><input asp-for="Slug" class="form-control" id="slug-input" /></div>
+    <div class="mb-3">
+        <label class="form-label">Danh mục</label>
+        <select asp-for="CategoryId" class="form-select">
+            @foreach (var c in (List<Category>)ViewBag.Categories)
+            {
+                <option value="@c.Id">@(c.ParentCategoryId != null ? "— " : "")@c.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3"><label class="form-label">Mô tả</label><textarea asp-for="Description" class="form-control"></textarea></div>
+    <div class="mb-3"><label class="form-label">Nguồn gốc xuất xứ</label><input asp-for="Origin" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Hướng dẫn bảo quản</label><input asp-for="PreservationInstructions" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Thông tin hạn sử dụng</label><input asp-for="ExpiryInfo" class="form-control" /></div>
+    <div class="form-check"><input asp-for="IsFeatured" class="form-check-input" /><label class="form-check-label">Sản phẩm nổi bật</label></div>
+    <div class="form-check"><input asp-for="IsNew" class="form-check-input" /><label class="form-check-label">Sản phẩm mới</label></div>
+    <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" checked /><label class="form-check-label">Đang bán</label></div>
+    <button class="btn btn-primary">Tạo sản phẩm</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+<script>
+    // Tự sinh slug từ Tên sản phẩm; ngừng tự động ngay khi người dùng tự gõ tay vào ô Slug.
+    var slugTouched = false;
+    document.getElementById('slug-input').addEventListener('input', function () { slugTouched = true; });
+    document.getElementById('name-input').addEventListener('input', function () {
+        if (slugTouched) return;
+        document.getElementById('slug-input').value = this.value
+            .toString().trim().toLowerCase()
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    });
+</script>
+}

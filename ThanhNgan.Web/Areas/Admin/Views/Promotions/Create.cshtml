@@ -1,0 +1,36 @@
+@model Coupon
+@{ ViewData["Title"] = "Tạo mã khuyến mãi"; }
+<h2>Tạo mã khuyến mãi</h2>
+<form asp-action="Create" method="post" class="col-md-6">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Mã</label><input asp-for="Code" class="form-control" placeholder="VD: GIAM10" /></div>
+    <div class="mb-3">
+        <label class="form-label">Loại</label>
+        <select asp-for="Type" class="form-select" id="couponType">
+            <option value="@((int)CouponType.Percentage)">Giảm theo %</option>
+            <option value="@((int)CouponType.FixedAmount)">Giảm số tiền cố định</option>
+            <option value="@((int)CouponType.ProductSpecific)">Giảm theo sản phẩm chỉ định (combo)</option>
+        </select>
+    </div>
+    <div class="mb-3"><label class="form-label">Giá trị (% hoặc VNĐ)</label><input asp-for="Value" class="form-control" /></div>
+    <div class="mb-3" id="productField">
+        <label class="form-label">Sản phẩm áp dụng (nếu chọn "theo sản phẩm")</label>
+        <select asp-for="AppliedProductId" class="form-select">
+            <option value="">-- Không chọn --</option>
+            @foreach (var p in (List<Product>)ViewBag.Products)
+            {
+                <option value="@p.Id">@p.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3"><label class="form-label">Đơn hàng tối thiểu</label><input asp-for="MinOrderAmount" class="form-control" /></div>
+    <div class="row mb-3">
+        <div class="col-6"><label class="form-label">Từ ngày</label><input asp-for="StartDate" type="date" class="form-control" /></div>
+        <div class="col-6"><label class="form-label">Đến ngày</label><input asp-for="EndDate" type="date" class="form-control" /></div>
+    </div>
+    <div class="mb-3"><label class="form-label">Giới hạn số lượt dùng (để trống = không giới hạn)</label><input asp-for="UsageLimit" class="form-control" /></div>
+    <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" checked /><label class="form-check-label">Kích hoạt</label></div>
+    <button class="btn btn-primary">Tạo</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

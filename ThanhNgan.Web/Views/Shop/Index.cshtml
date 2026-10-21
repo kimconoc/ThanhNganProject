@@ -1,0 +1,82 @@
+@model ShopListViewModel
+@{
+    ViewData["Title"] = Model.CategoryName ?? "Sản phẩm";
+}
+
+<div class="container my-4">
+    <h2 class="mb-4">@(Model.CategoryName ?? "Tất cả sản phẩm")</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="categorySlug" value="@Model.CategorySlug" />
+                <div class="mb-3">
+                    <label class="form-label">Tìm kiếm</label>
+                    <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Tên sản phẩm..." />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Khoảng giá</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" name="minPrice" value="@Model.MinPrice" class="form-control" placeholder="Từ" />
+                        <input type="number" name="maxPrice" value="@Model.MaxPrice" class="form-control" placeholder="Đến" />
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="onlyPromotion" value="true" class="form-check-input" id="onlyPromotion" @(Model.OnlyPromotion ? "checked" : "") />
+                    <label class="form-check-label" for="onlyPromotion">Chỉ xem khuyến mãi</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+
+                @if (Model.SubCategories.Count > 0)
+                {
+                    <hr />
+                    <h6>Danh mục con</h6>
+                    <ul class="list-unstyled">
+                        @foreach (var sub in Model.SubCategories)
+                        {
+                            <li><a asp-action="Index" asp-route-categorySlug="@sub.Slug">@sub.Name</a></li>
+                        }
+                    </ul>
+                }
+            </form>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">@Model.TotalItems sản phẩm</span>
+                <form method="get" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="categorySlug" value="@Model.CategorySlug" />
+                    <input type="hidden" name="keyword" value="@Model.Keyword" />
+                    <label class="mb-0">Sắp xếp:</label>
+                    <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()" style="width:auto">
+                        <option value="newest" selected="@(Model.Sort == "newest")">Mới nhất</option>
+                        <option value="price_asc" selected="@(Model.Sort == "price_asc")">Giá tăng dần</option>
+                        <option value="price_desc" selected="@(Model.Sort == "price_desc")">Giá giảm dần</option>
+                    </select>
+                </form>
+            </div>
+
+            <div class="row">
+                @if (Model.Products.Count == 0)
+                {
+                    <p>Không tìm thấy sản phẩm phù hợp.</p>
+                }
+                @foreach (var p in Model.Products) { <partial name="_ProductCard" model="p" /> }
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav>
+                    <ul class="pagination">
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.Page ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-categorySlug="@Model.CategorySlug" asp-route-keyword="@Model.Keyword" asp-route-sort="@Model.Sort" asp-route-page="@i">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>

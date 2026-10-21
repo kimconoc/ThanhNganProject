@@ -1,0 +1,42 @@
+@model StockAdjustment
+@{ ViewData["Title"] = "Phiếu kiểm kê " + Model.Code; }
+<h2>Phiếu kiểm kê @Model.Code</h2>
+<p>Ngày tạo: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+<p>
+    Trạng thái:
+    @if (Model.Status == DocumentStatus.PendingApproval) { <span class="badge bg-warning text-dark">Chờ duyệt</span> }
+    else if (Model.Status == DocumentStatus.Approved) { <span class="badge bg-success">Đã duyệt</span> }
+    else { <span class="badge bg-secondary">@Model.Status.ToDisplay()</span> }
+</p>
+@if (!string.IsNullOrEmpty(Model.Note)) { <p>Ghi chú: @Model.Note</p> }
+
+<table class="table bg-white">
+    <thead><tr><th>Sản phẩm</th><th>Tồn hệ thống</th><th>Tồn thực tế</th><th>Chênh lệch</th></tr></thead>
+    <tbody>
+        @foreach (var d in Model.Details)
+        {
+            <tr>
+                <td>@d.ProductVariant.Product.Name (@d.ProductVariant.PackagingSpec)</td>
+                <td>@d.SystemQuantity</td>
+                <td>@d.ActualQuantity</td>
+                <td class="@(d.Difference < 0 ? "text-danger" : d.Difference > 0 ? "text-success" : "")">@d.Difference</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Status == DocumentStatus.PendingApproval)
+{
+    if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+    {
+        <form asp-action="Approve" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Duyệt phiếu kiểm kê và điều chỉnh tồn kho theo chênh lệch?');">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-success">✓ Duyệt &amp; điều chỉnh tồn kho</button>
+        </form>
+    }
+    <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Hủy phiếu kiểm kê này? Phiếu chưa duyệt nên chưa ảnh hưởng tồn kho.');">
+        @Html.AntiForgeryToken()
+        <button class="btn btn-outline-danger">✗ Hủy phiếu</button>
+    </form>
+}
+<a asp-action="Index" class="btn btn-secondary mt-2">Quay lại danh sách</a>

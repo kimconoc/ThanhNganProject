@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản trị Thanh Ngân</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body { background: #f5f6f8; }
+        #admin-sidebar { min-height: 100vh; background: #1f2937; }
+        #admin-sidebar a { color: #cbd5e1; display: block; padding: .5rem 1rem; text-decoration: none; }
+        #admin-sidebar a:hover, #admin-sidebar a.active { background: #374151; color: #fff; }
+        #admin-sidebar h6 { color: #6b7280; padding: .75rem 1rem 0; text-transform: uppercase; font-size: .75rem; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <nav id="admin-sidebar" class="flex-shrink-0" style="width:230px">
+            @{ var isWarehouse = User.IsInRole(RoleNames.WarehouseStaff) || User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin); }
+            <div class="text-white fw-bold fs-5 p-3">🦐 Thanh Ngân Admin</div>
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">📊 Tổng quan</a>
+
+            <h6>Sản phẩm</h6>
+            @if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+            {
+                <a asp-area="Admin" asp-controller="Products" asp-action="Index">Sản phẩm</a>
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index">Danh mục</a>
+            }
+            @if (isWarehouse)
+            {
+                <a asp-area="Admin" asp-controller="Suppliers" asp-action="Index">Nhà cung cấp</a>
+            }
+
+            <h6>Kho</h6>
+            @if (isWarehouse)
+            {
+                <a asp-area="Admin" asp-controller="StockIn" asp-action="Index">Phiếu nhập kho</a>
+                <a asp-area="Admin" asp-controller="StockOut" asp-action="Index">Phiếu xuất kho</a>
+                <a asp-area="Admin" asp-controller="StockAdjustment" asp-action="Index">Kiểm kê kho</a>
+            }
+
+            <h6>Bán hàng</h6>
+            <a asp-area="Admin" asp-controller="Orders" asp-action="Index">Đơn hàng</a>
+            @if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+            {
+                <a asp-area="Admin" asp-controller="Customers" asp-action="Index">Khách hàng</a>
+                <a asp-area="Admin" asp-controller="Promotions" asp-action="Index">Khuyến mãi</a>
+            }
+
+            @if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+            {
+                <h6>Quản trị</h6>
+                <a asp-area="Admin" asp-controller="Reports" asp-action="Index">Báo cáo</a>
+                @if (User.IsInRole(RoleNames.Admin))
+                {
+                    <a asp-area="Admin" asp-controller="Employees" asp-action="Index">Nhân viên</a>
+                }
+                <a asp-area="Admin" asp-controller="Settings" asp-action="Index">Cấu hình</a>
+            }
+
+            <hr class="text-secondary" />
+            <a asp-area="" asp-controller="Home" asp-action="Index">⬅ Về trang bán hàng</a>
+        </nav>
+
+        <div class="flex-grow-1 p-4">
+            @{
+                var toast = TempData["AdminMessage"] as string;
+            }
+            @if (!string.IsNullOrEmpty(toast))
+            {
+                <div class="alert alert-success">@toast</div>
+            }
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

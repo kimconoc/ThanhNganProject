@@ -1,0 +1,78 @@
+@model ThanhNgan.Web.Areas.Admin.Models.StockOutForm
+@{
+    ViewData["Title"] = "Tạo phiếu xuất kho";
+    var variants = (List<ProductVariant>)ViewBag.Variants;
+}
+<h2>Tạo phiếu xuất kho (hủy/hao hụt hoặc chuyển kho)</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Loại xuất</label>
+            <select name="Type" class="form-select">
+                <option value="@((int)StockOutType.Damage)">Hủy / hao hụt (hỏng, hết hạn)</option>
+                <option value="@((int)StockOutType.Transfer)">Chuyển kho</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Chuyển tới (nếu chuyển kho)</label>
+            <input name="TargetWarehouse" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Ghi chú</label>
+            <input name="Note" class="form-control" />
+        </div>
+    </div>
+
+    <table class="table bg-white" id="lines-table">
+        <thead><tr><th>Sản phẩm (biến thể)</th><th>Số lượng</th><th></th></tr></thead>
+        <tbody>
+            <tr class="line-row">
+                <td>
+                    <select name="Lines[0].ProductVariantId" class="form-select" required>
+                        @foreach (var v in variants)
+                        {
+                            <option value="@v.Id">@v.Product.Name - @v.PackagingSpec (tồn: @v.StockQuantity)</option>
+                        }
+                    </select>
+                </td>
+                <td><input name="Lines[0].Quantity" type="number" min="1" class="form-control" required /></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger remove-line">x</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" id="add-line" class="btn btn-sm btn-outline-primary mb-3">+ Thêm dòng</button>
+    <br />
+    <button class="btn btn-primary">Tạo phiếu xuất</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+<script>
+    document.getElementById('add-line').addEventListener('click', function () {
+        var tbody = document.querySelector('#lines-table tbody');
+        var rows = tbody.querySelectorAll('.line-row');
+        var newRow = rows[0].cloneNode(true);
+        newRow.querySelectorAll('[name]').forEach(function (el) {
+            el.name = el.name.replace(/Lines\[\d+\]/, 'Lines[' + rows.length + ']');
+            if (el.tagName !== 'SELECT') el.value = '';
+        });
+        tbody.appendChild(newRow);
+    });
+    document.querySelector('#lines-table tbody').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-line')) {
+            var rows = document.querySelectorAll('.line-row');
+            if (rows.length > 1) { e.target.closest('tr').remove(); reindexLines(); }
+        }
+    });
+    function reindexLines() {
+        document.querySelectorAll('#lines-table .line-row').forEach(function (row, idx) {
+            row.querySelectorAll('[name]').forEach(function (el) {
+                el.name = el.name.replace(/Lines\[\d+\]/, 'Lines[' + idx + ']');
+            });
+        });
+    }
+</script>
+}

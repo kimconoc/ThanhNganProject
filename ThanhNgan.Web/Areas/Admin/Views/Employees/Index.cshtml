@@ -1,0 +1,51 @@
+@model List<EmployeeRow>
+@{ ViewData["Title"] = "Nhân viên"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Nhân viên &amp; phân quyền</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Thêm nhân viên</a>
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            var isSelf = e.Id == (string)ViewBag.CurrentUserId;
+            <tr>
+                <td>@e.FullName</td><td>@e.Email</td><td>@e.PhoneNumber</td>
+                <td>@string.Join(", ", e.Roles.Select(EnumDisplay.RoleToDisplay))</td>
+                <td>@(e.IsLocked ? "🔒 Đã khóa" : "✅ Hoạt động")</td>
+                <td class="d-flex gap-1">
+                    <a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-sm btn-outline-primary">Sửa quyền</a>
+                    <form asp-action="ToggleLock" asp-route-id="@e.Id" method="post"
+                          onsubmit="return confirm('@(e.IsLocked ? "Mở khóa" : "Khóa") tài khoản @e.FullName?');">
+                        @Html.AntiForgeryToken()
+                        @if (isSelf)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Không thể tự khóa chính mình">@(e.IsLocked ? "Mở khóa" : "Khóa")</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-sm @(e.IsLocked ? "btn-outline-success" : "btn-outline-danger")">@(e.IsLocked ? "Mở khóa" : "Khóa")</button>
+                        }
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h5 class="mt-4">Bảng phân quyền</h5>
+<table class="table table-bordered bg-white small">
+    <thead><tr><th>Vai trò</th><th>Xem tồn kho</th><th>Tạo phiếu nhập</th><th>Tạo phiếu xuất (thủ công)</th><th>Hủy phiếu chờ duyệt</th><th>Duyệt phiếu</th><th>Quản lý SP/giá</th><th>Báo cáo lời/lỗ</th></tr></thead>
+    <tbody>
+        <tr><td>Nhân viên kho</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+        <tr><td>Nhân viên bán hàng</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+        <tr><td>Quản lý</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Admin</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+    </tbody>
+</table>
+<p class="text-muted small">
+    * Xuất bán khi xác nhận đơn hàng (Đơn hàng → Xác nhận) tự sinh phiếu xuất và áp dụng cho <strong>mọi vai trò nhân viên</strong>, không qua màn hình "Tạo phiếu xuất" thủ công ở trên (màn hình đó chỉ dùng cho hủy/hao hụt/chuyển kho).<br />
+    * "Hủy phiếu chờ duyệt" chỉ xóa được phiếu <em>chưa duyệt</em> (chưa cộng/trừ tồn kho); không có chức năng sửa/xóa phiếu đã duyệt cho bất kỳ vai trò nào, kể cả Admin.<br />
+    * Báo cáo lời/lỗ: Quản lý và Admin hiện có quyền truy cập giống hệt nhau (xem toàn bộ + xuất Excel) — code hiện chưa cài đặt việc giới hạn phạm vi số liệu cho Quản lý.
+</p>

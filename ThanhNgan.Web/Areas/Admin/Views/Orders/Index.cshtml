@@ -1,0 +1,27 @@
+@model List<Order>
+@{ ViewData["Title"] = "Đơn hàng"; }
+<h2 class="mb-3">Đơn hàng</h2>
+
+<div class="mb-3 d-flex gap-2">
+    <a asp-action="Index" class="btn btn-sm @(ViewBag.StatusFilter == null ? "btn-primary" : "btn-outline-secondary")">Tất cả</a>
+    @foreach (var s in Enum.GetValues<OrderStatus>())
+    {
+        <a asp-action="Index" asp-route-status="@s" class="btn btn-sm @(Equals(ViewBag.StatusFilter, s) ? "btn-primary" : "btn-outline-secondary")">@s.ToDisplay()</a>
+    }
+</div>
+
+<table class="table bg-white">
+    <thead><tr><th>Mã đơn</th><th>Người nhận</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>@o.Code</td><td>@o.RecipientName - @o.RecipientPhone</td>
+                <td>@o.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@o.TotalAmount.ToString("N0")đ</td>
+                <td><span class="badge bg-info">@o.Status.ToDisplay()</span></td>
+                <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-primary">Xem</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

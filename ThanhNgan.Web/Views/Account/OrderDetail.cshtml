@@ -1,0 +1,25 @@
+@model Order
+@{ ViewData["Title"] = "Chi tiết đơn hàng " + Model.Code; }
+<div class="container my-4">
+    <h2>Đơn hàng @Model.Code</h2>
+    <p>Trạng thái: <span class="badge bg-info">@Model.Status.ToDisplay()</span> | Thanh toán: @Model.PaymentMethod.ToDisplay() (@Model.PaymentStatus.ToDisplay())</p>
+    <p>Người nhận: @Model.RecipientName - @Model.RecipientPhone</p>
+    <p>Địa chỉ: @Model.ShippingAddress</p>
+    <p>Phương thức giao hàng: @Model.ShippingMethod?.Name</p>
+    <table class="table">
+        <thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>SL</th><th>Thành tiền</th></tr></thead>
+        <tbody>
+            @foreach (var d in Model.Details)
+            {
+                <tr><td>@d.ProductName (@d.PackagingSpec)</td><td>@d.UnitPrice.ToString("N0")đ</td><td>@d.Quantity</td><td>@d.LineTotal.ToString("N0")đ</td></tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-end">
+        <p>Tạm tính: @Model.SubTotal.ToString("N0")đ</p>
+        <p>Giảm giá: -@Model.DiscountAmount.ToString("N0")đ</p>
+        <p>Phí vận chuyển: @Model.ShippingFee.ToString("N0")đ</p>
+        <h5>Tổng cộng: @Model.TotalAmount.ToString("N0")đ</h5>
+    </div>
+    <a asp-action="OrderHistory" class="btn btn-secondary">Quay lại</a>
+</div>

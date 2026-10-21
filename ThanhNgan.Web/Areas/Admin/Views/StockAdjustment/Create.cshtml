@@ -1,0 +1,72 @@
+@model ThanhNgan.Web.Areas.Admin.Models.StockAdjustmentForm
+@{
+    ViewData["Title"] = "Tạo phiếu kiểm kê";
+    var variants = (List<ProductVariant>)ViewBag.Variants;
+}
+<h2>Tạo phiếu kiểm kê kho</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+<p class="text-muted">Nhập số lượng tồn kho thực tế đếm được. Phiếu sẽ ở trạng thái chờ Quản lý duyệt trước khi điều chỉnh tồn kho hệ thống.</p>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3"><label class="form-label">Ghi chú</label><input name="Note" class="form-control" /></div>
+
+    <table class="table bg-white" id="lines-table">
+        <thead><tr><th>Sản phẩm (biến thể)</th><th>Tồn hệ thống hiện tại</th><th>Tồn thực tế đếm được</th><th></th></tr></thead>
+        <tbody>
+            <tr class="line-row">
+                <td>
+                    <select name="Lines[0].ProductVariantId" class="form-select variant-select" required>
+                        @foreach (var v in variants)
+                        {
+                            <option value="@v.Id" data-stock="@v.StockQuantity">@v.Product.Name - @v.PackagingSpec</option>
+                        }
+                    </select>
+                </td>
+                <td class="system-qty">@variants.FirstOrDefault()?.StockQuantity</td>
+                <td><input name="Lines[0].ActualQuantity" type="number" min="0" class="form-control" required /></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger remove-line">x</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" id="add-line" class="btn btn-sm btn-outline-primary mb-3">+ Thêm dòng</button>
+    <br />
+    <button class="btn btn-primary">Tạo phiếu kiểm kê</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+<script>
+    function updateSystemQty(select) {
+        var opt = select.selectedOptions[0];
+        select.closest('tr').querySelector('.system-qty').textContent = opt ? opt.dataset.stock : '';
+    }
+    document.querySelector('#lines-table tbody').addEventListener('change', function (e) {
+        if (e.target.classList.contains('variant-select')) updateSystemQty(e.target);
+    });
+    document.getElementById('add-line').addEventListener('click', function () {
+        var tbody = document.querySelector('#lines-table tbody');
+        var rows = tbody.querySelectorAll('.line-row');
+        var newRow = rows[0].cloneNode(true);
+        newRow.querySelectorAll('[name]').forEach(function (el) {
+            el.name = el.name.replace(/Lines\[\d+\]/, 'Lines[' + rows.length + ']');
+            if (el.tagName !== 'SELECT') el.value = '';
+        });
+        tbody.appendChild(newRow);
+        updateSystemQty(newRow.querySelector('.variant-select'));
+    });
+    document.querySelector('#lines-table tbody').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-line')) {
+            var rows = document.querySelectorAll('.line-row');
+            if (rows.length > 1) { e.target.closest('tr').remove(); reindexLines(); }
+        }
+    });
+    function reindexLines() {
+        document.querySelectorAll('#lines-table .line-row').forEach(function (row, idx) {
+            row.querySelectorAll('[name]').forEach(function (el) {
+                el.name = el.name.replace(/Lines\[\d+\]/, 'Lines[' + idx + ']');
+            });
+        });
+    }
+</script>
+}

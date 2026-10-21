@@ -1,0 +1,26 @@
+@model List<Coupon>
+@{ ViewData["Title"] = "Khuyến mãi"; }
+<div class="d-flex justify-content-between mb-3">
+    <h2>Mã giảm giá / Khuyến mãi</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Tạo mã mới</a>
+</div>
+<table class="table bg-white">
+    <thead><tr><th>Mã</th><th>Loại</th><th>Giá trị</th><th>Thời gian</th><th>Đã dùng</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Code</td>
+                <td>@(c.Type switch { CouponType.Percentage => "Theo %", CouponType.FixedAmount => "Số tiền cố định", _ => "Theo sản phẩm" })</td>
+                <td>@(c.Type == CouponType.Percentage ? $"{c.Value}%" : $"{c.Value:N0}đ")</td>
+                <td>@c.StartDate.ToString("dd/MM/yyyy") - @c.EndDate.ToString("dd/MM/yyyy")</td>
+                <td>@c.UsedCount@(c.UsageLimit.HasValue ? $"/{c.UsageLimit}" : "")</td>
+                <td>
+                    @if (c.IsActive && c.IsValidNow(DateTime.UtcNow)) { <span class="badge bg-success">Hiệu lực</span> }
+                    else { <span class="badge bg-secondary">Hết hiệu lực</span> }
+                </td>
+                <td><a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Sửa</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

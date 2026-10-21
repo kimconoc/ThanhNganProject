@@ -1,0 +1,32 @@
+@model ProfitLossReportViewModel
+@{ ViewData["Title"] = "Báo cáo lời/lỗ"; }
+<h2 class="mb-3">Báo cáo lời/lỗ (giá vốn theo FIFO)</h2>
+<partial name="_ReportsNav" />
+
+<form method="get" class="d-flex gap-2 mb-4 align-items-end">
+    <div><label class="form-label">Từ ngày</label><input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <div><label class="form-label">Đến ngày</label><input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <button class="btn btn-primary">Xem</button>
+    <a class="btn btn-outline-success" asp-action="ExportProfitLossExcel" asp-route-from="@Model.From.ToString("yyyy-MM-dd")" asp-route-to="@Model.To.ToString("yyyy-MM-dd")">⬇ Xuất Excel</a>
+</form>
+
+<div class="row mb-3">
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Doanh thu</div><h5>@Model.TotalRevenue.ToString("N0")đ</h5></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Giá vốn (FIFO)</div><h5>@Model.TotalCogs.ToString("N0")đ</h5></div></div>
+    <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Lợi nhuận gộp</div><h5>@Model.TotalProfit.ToString("N0")đ</h5></div></div>
+    <div class="col-md-3"><div class="card p-3 border-danger"><div class="text-muted small">Lợi nhuận thực tế (trừ hao hụt @Model.ShrinkageValue.ToString("N0")đ)</div><h5>@Model.NetProfit.ToString("N0")đ</h5></div></div>
+</div>
+
+<table class="table bg-white table-sm">
+    <thead><tr><th>Mã đơn</th><th>Ngày</th><th>Doanh thu</th><th>Giá vốn</th><th>Lợi nhuận</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <tr>
+                <td>@r.OrderCode</td><td>@r.Date.ToString("dd/MM/yyyy")</td>
+                <td>@r.Revenue.ToString("N0")đ</td><td>@r.Cogs.ToString("N0")đ</td>
+                <td class="@(r.Profit < 0 ? "text-danger" : "text-success")">@r.Profit.ToString("N0")đ</td>
+            </tr>
+        }
+    </tbody>
+</table>
