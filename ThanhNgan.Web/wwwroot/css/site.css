@@ -309,3 +309,85 @@ footer.site-footer .footer-contact-list li {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ===== Nút liên hệ nổi (Zalo / Messenger / Gọi điện) ===== */
+.floating-contact-widget {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1030;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+.inner-fabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.fab {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+.fab:hover { color: #fff; transform: scale(1.1); }
+.fab svg { width: 60%; height: 60%; }
+.fab-sm { width: 46px; height: 46px; }
+.fab-lg { width: 60px; height: 60px; }
+.fab.zalo { background: #0068ff; }
+.fab.messenger { background: linear-gradient(135deg, #00c6ff, #0078ff 45%, #a033ff 75%, #ff5c94); }
+.fab.call { background: #22c55e; position: relative; }
+
+.hotline-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  text-decoration: none;
+}
+.hotline-bar {
+  background: #22c55e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  padding: 0 0 0 1rem;
+  height: 44px;
+  border-radius: 1.5rem 0 0 1.5rem;
+  display: flex;
+  align-items: center;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+.hotline-wrap:hover .hotline-bar {
+  max-width: 220px;
+  opacity: 1;
+  padding: 0 0.75rem 0 1rem;
+  margin-right: -0.75rem;
+}
+
+.call-animation::before,
+.call-animation::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #22c55e;
+  z-index: -1;
+  animation: fab-call-pulse 1.6s ease-out infinite;
+}
+.call-animation::after { animation-delay: 0.5s; }
+
+@keyframes fab-call-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.9); opacity: 0; }
+}

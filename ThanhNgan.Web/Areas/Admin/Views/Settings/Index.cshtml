@@ -3,7 +3,7 @@
     var shippingMethods = (List<ShippingMethod>)ViewBag.ShippingMethods;
     var pages = (List<StaticPage>)ViewBag.StaticPages;
     var pageSlugs = new[] { "gioi-thieu", "chinh-sach-giao-hang", "chinh-sach-doi-tra" };
-    var contact = ((string Hotline, string Zalo, string Email))ViewBag.Contact;
+    var contact = ((string Hotline, string Zalo, string Messenger, string Email))ViewBag.Contact;
 }
 <h2 class="mb-4">Cấu hình hệ thống</h2>
 
@@ -15,11 +15,15 @@
             <label class="form-label small">Hotline</label>
             <input name="hotline" value="@contact.Hotline" class="form-control form-control-sm" required />
         </div>
-        <div class="col-md-3">
-            <label class="form-label small">Zalo</label>
+        <div class="col-md-2">
+            <label class="form-label small">Zalo (SĐT)</label>
             <input name="zalo" value="@contact.Zalo" class="form-control form-control-sm" required />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
+            <label class="form-label small">Messenger (username fanpage)</label>
+            <input name="messenger" value="@contact.Messenger" class="form-control form-control-sm" placeholder="vd: thanhnganseafood" />
+        </div>
+        <div class="col-md-3">
             <label class="form-label small">Email</label>
             <input name="email" value="@contact.Email" type="email" class="form-control form-control-sm" required />
         </div>
