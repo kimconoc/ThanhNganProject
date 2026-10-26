@@ -1,0 +1,49 @@
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7.3.0/tinymce.min.js"></script>
+<script>
+    function tnUploadImage(blob, filename) {
+        var fd = new FormData();
+        fd.append('file', blob, filename);
+        fd.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+        return fetch('@Url.Action("UploadEditorImage", "Products", new { area = "Admin" })', { method: 'POST', body: fd })
+            .then(function (r) {
+                if (!r.ok) throw new Error('Upload ảnh thất bại (chỉ nhận .jpg, .jpeg, .png, .webp, .gif).');
+                return r.json();
+            })
+            .then(function (j) { return j.location; });
+    }
+
+    tinymce.init({
+        selector: 'textarea.tn-editor',
+        license_key: 'gpl',
+        height: 500,
+        menubar: false,
+        plugins: 'image link lists table code',
+        toolbar: 'undo redo | blocks | bold italic | bullist numlist | link image table | code',
+        relative_urls: false,
+        remove_script_host: true,
+        convert_urls: true,
+        automatic_uploads: true,
+        paste_data_images: true,
+        image_uploadtab: true,
+        image_advtab: false,
+        image_dimensions: true,
+        resize_img_proportional: false,
+        images_upload_handler: function (blobInfo) {
+            return tnUploadImage(blobInfo.blob(), blobInfo.filename());
+        },
+        file_picker_types: 'image',
+        file_picker_callback: function (callback) {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/jpeg,image/png,image/webp,image/gif';
+            input.onchange = function () {
+                var file = input.files[0];
+                if (!file) return;
+                tnUploadImage(file, file.name)
+                    .then(function (url) { callback(url, { alt: file.name.replace(/\.[^.]+$/, '') }); })
+                    .catch(function (e) { alert(e.message); });
+            };
+            input.click();
+        }
+    });
+</script>

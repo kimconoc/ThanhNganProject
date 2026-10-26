@@ -13,7 +13,23 @@ public class ProductsController : AdminControllerBase
 
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _env;
+    private static readonly Ganss.Xss.HtmlSanitizer Sanitizer = new();
+
     public ProductsController(ApplicationDbContext db, IWebHostEnvironment env) { _db = db; _env = env; }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadEditorImage(IFormFile file)
+    {
+        var ext = file is null ? "" : Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (file is null || file.Length == 0 || !AllowedImageExtensions.Contains(ext)) return BadRequest();
+        var folder = Path.Combine(_env.WebRootPath, "images", "products");
+        Directory.CreateDirectory(folder);
+        var fileName = $"{Guid.NewGuid()}{ext}";
+        using (var stream = new FileStream(Path.Combine(folder, fileName), FileMode.Create))
+            await file.CopyToAsync(stream);
+        return Json(new { location = $"/images/products/{fileName}" });
+    }
 
     public async Task<IActionResult> Index(string? keyword)
     {
@@ -38,6 +54,7 @@ public class ProductsController : AdminControllerBase
             ViewBag.Categories = await _db.Categories.ToListAsync();
             return View(model);
         }
+        if (model.IntroHtml is not null) model.IntroHtml = Sanitizer.Sanitize(model.IntroHtml);
         _db.Products.Add(model);
         await _db.SaveChangesAsync();
         TempData["AdminMessage"] = "Đã tạo sản phẩm. Thêm biến thể (quy cách) và hình ảnh bên dưới.";
@@ -67,6 +84,7 @@ public class ProductsController : AdminControllerBase
             ViewBag.Categories = await _db.Categories.ToListAsync();
             return View(model);
         }
+        if (model.IntroHtml is not null) model.IntroHtml = Sanitizer.Sanitize(model.IntroHtml);
         _db.Products.Update(model);
         await _db.SaveChangesAsync();
         TempData["AdminMessage"] = "Đã cập nhật sản phẩm.";
@@ -181,6 +199,18 @@ public class ProductsController : AdminControllerBase
             await _db.ProductImages.Where(i => i.ProductId == productId).ExecuteUpdateAsync(s => s.SetProperty(i => i.IsMain, false));
         _db.ProductImages.Add(new ProductImage { ProductId = productId, ImageUrl = imageUrl, IsMain = isMain });
         await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(Edit), new { id = productId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetMainImage(int id, int productId)
+    {
+        if (await _db.ProductImages.AnyAsync(i => i.Id == id && i.ProductId == productId))
+        {
+            await _db.ProductImages.Where(i => i.ProductId == productId).ExecuteUpdateAsync(s => s.SetProperty(i => i.IsMain, i => i.Id == id));
+            TempData["AdminMessage"] = "Đã đổi ảnh chính.";
+        }
         return RedirectToAction(nameof(Edit), new { id = productId });
     }
 

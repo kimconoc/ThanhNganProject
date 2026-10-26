@@ -15,7 +15,8 @@
             }
         </select>
     </div>
-    <div class="mb-3"><label class="form-label">Mô tả</label><textarea asp-for="Description" class="form-control"></textarea></div>
+    <div class="mb-3"><label class="form-label">Mô tả ngắn</label><textarea asp-for="Description" class="form-control"></textarea></div>
+    <div class="mb-3"><label class="form-label">Bài giới thiệu sản phẩm (có ảnh, định dạng)</label><textarea asp-for="IntroHtml" class="form-control tn-editor"></textarea></div>
     <div class="mb-3"><label class="form-label">Nguồn gốc xuất xứ</label><input asp-for="Origin" class="form-control" /></div>
     <div class="mb-3"><label class="form-label">Hướng dẫn bảo quản</label><input asp-for="PreservationInstructions" class="form-control" /></div>
     <div class="mb-3"><label class="form-label">Thông tin hạn sử dụng</label><input asp-for="ExpiryInfo" class="form-control" /></div>
@@ -28,6 +29,7 @@
 </form>
 
 @section Scripts {
+<partial name="_HtmlEditorScripts" />
 <script>
     // Tự sinh slug từ Tên sản phẩm; ngừng tự động ngay khi người dùng tự gõ tay vào ô Slug.
     var slugTouched = false;

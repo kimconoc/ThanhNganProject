@@ -19,7 +19,8 @@
                     }
                 </select>
             </div>
-            <div class="mb-3"><label class="form-label">Mô tả</label><textarea asp-for="Description" class="form-control"></textarea></div>
+            <div class="mb-3"><label class="form-label">Mô tả ngắn</label><textarea asp-for="Description" class="form-control"></textarea></div>
+            <div class="mb-3"><label class="form-label">Bài giới thiệu sản phẩm (có ảnh, định dạng)</label><textarea asp-for="IntroHtml" class="form-control tn-editor"></textarea></div>
             <div class="mb-3"><label class="form-label">Nguồn gốc xuất xứ</label><input asp-for="Origin" class="form-control" /></div>
             <div class="mb-3"><label class="form-label">Hướng dẫn bảo quản</label><input asp-for="PreservationInstructions" class="form-control" /></div>
             <div class="mb-3"><label class="form-label">Thông tin hạn sử dụng</label><input asp-for="ExpiryInfo" class="form-control" /></div>
@@ -100,6 +101,15 @@
                     <div class="d-flex align-items-center gap-2 mb-1">
                         <img src="@img.ImageUrl" style="width:40px;height:40px;object-fit:cover" />
                         <span class="small text-truncate flex-grow-1">@img.ImageUrl @(img.IsMain ? "(ảnh chính)" : "")</span>
+                        @if (!img.IsMain)
+                        {
+                            <form asp-action="SetMainImage" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@img.Id" />
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <button class="btn btn-sm btn-outline-secondary text-nowrap">Đặt làm chính</button>
+                            </form>
+                        }
                         <form asp-action="DeleteImage" method="post">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@img.Id" />
@@ -122,3 +132,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_HtmlEditorScripts" />
+}

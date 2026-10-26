@@ -102,6 +102,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<BlogPost>().HasIndex(b => b.Slug).IsUnique();
         builder.Entity<StaticPage>().HasIndex(p => p.Slug).IsUnique();
         builder.Entity<SystemSetting>().HasKey(s => s.Key);
+        // Mỗi lần mua (dòng đơn) chỉ có 1 đánh giá; lọc NOT NULL để đánh giá cũ chưa gắn đơn không bị vướng.
+        builder.Entity<Review>().HasIndex(r => r.OrderDetailId).IsUnique().HasFilter("[OrderDetailId] IS NOT NULL");
 
         // Guest checkout: Order/Address/Review không ràng buộc FK cứng tới User để tránh lỗi khi UserId null.
         builder.Entity<Order>()

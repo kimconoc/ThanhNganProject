@@ -40,7 +40,18 @@ public class ProductDetailViewModel
     public List<Product> RelatedProducts { get; set; } = new();
     public double AverageRating { get; set; }
     public int ReviewCount { get; set; }
-    public bool CanReview { get; set; } // đã mua & đăng nhập
+    public List<PurchaseReviewItem> Purchases { get; set; } = new(); // các lần mua đã hoàn thành của người dùng (mỗi lần mua được đánh giá 1 lần)
+    public bool CanReview => Purchases.Count > 0;
+}
+
+public class PurchaseReviewItem
+{
+    public int OrderDetailId { get; set; }
+    public string OrderCode { get; set; } = string.Empty;
+    public DateTime OrderDate { get; set; }
+    public string PackagingSpec { get; set; } = string.Empty;
+    public Review? Review { get; set; }
+    public bool CanEdit { get; set; } // chưa đánh giá, hoặc còn trong thời hạn sửa
 }
 
 public class HomeViewModel

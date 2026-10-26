@@ -46,6 +46,7 @@
             {
                 <a asp-area="Admin" asp-controller="Customers" asp-action="Index">Khách hàng</a>
                 <a asp-area="Admin" asp-controller="Promotions" asp-action="Index">Khuyến mãi</a>
+                <a asp-area="Admin" asp-controller="Reviews" asp-action="Index">Đánh giá</a>
             }
 
             @if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))

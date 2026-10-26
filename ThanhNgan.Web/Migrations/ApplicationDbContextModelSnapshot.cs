@@ -684,6 +684,9 @@ namespace ThanhNgan.Web.Migrations
                     b.Property<string>("ExpiryInfo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IntroHtml")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -826,6 +829,10 @@ namespace ThanhNgan.Web.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderDetailId")
+                        .IsUnique()
+                        .HasFilter("[OrderDetailId] IS NOT NULL");
 
                     b.HasIndex("ProductId");
 

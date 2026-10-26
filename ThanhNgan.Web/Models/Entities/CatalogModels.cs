@@ -30,6 +30,7 @@ public class Product
     [BindNever, ValidateNever]
     public Category Category { get; set; } = null!;
     public string? Description { get; set; }
+    public string? IntroHtml { get; set; } // bài giới thiệu sản phẩm (HTML từ trình soạn admin, đã sanitize khi lưu)
     public string? Origin { get; set; } // nguồn gốc xuất xứ
     public string? PreservationInstructions { get; set; } // bảo quản (đông lạnh)
     public string? ExpiryInfo { get; set; } // hạn sử dụng (mắm cá cơm)

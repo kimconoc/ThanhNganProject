@@ -6,7 +6,7 @@ public static class ProductMapping
 {
     public static ProductCardViewModel ToCard(this Product p)
     {
-        var mainImage = p.Images.OrderByDescending(i => i.IsMain).ThenBy(i => i.DisplayOrder).FirstOrDefault();
+        var mainImage = p.Images.OrderByDescending(i => i.IsMain).ThenBy(i => i.DisplayOrder).ThenBy(i => i.Id).FirstOrDefault();
         var activeVariants = p.Variants.Where(v => v.IsActive).ToList();
         var cheapest = activeVariants.OrderBy(v => v.EffectivePrice).FirstOrDefault();
         return new ProductCardViewModel
