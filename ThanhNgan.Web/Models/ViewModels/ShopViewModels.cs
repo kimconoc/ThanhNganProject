@@ -54,6 +54,20 @@ public class PurchaseReviewItem
     public bool CanEdit { get; set; } // chưa đánh giá, hoặc còn trong thời hạn sửa
 }
 
+public record LicenseFile(string Url, string Title, bool IsImage);
+
+public class AboutViewModel
+{
+    public List<LicenseFile> Licenses { get; set; } = new();
+    public StaticPage? Story { get; set; } // nội dung "gioi-thieu" admin soạn trong Cài đặt (tùy chọn)
+    public List<Category> TopCategories { get; set; } = new();
+    public List<Review> Reviews { get; set; } = new();
+    public int ProductCount { get; set; }
+    public int CompletedOrderCount { get; set; }
+    public int ReviewCount { get; set; }
+    public double AverageRating { get; set; }
+}
+
 public class HomeViewModel
 {
     public List<Category> TopCategories { get; set; } = new();

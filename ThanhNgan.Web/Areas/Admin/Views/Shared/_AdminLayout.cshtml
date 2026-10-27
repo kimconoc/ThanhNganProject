@@ -1,3 +1,5 @@
+@inject ThanhNgan.Web.Data.ApplicationDbContext Db
+@using Microsoft.EntityFrameworkCore
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -42,6 +44,13 @@
 
             <h6>Bán hàng</h6>
             <a asp-area="Admin" asp-controller="Orders" asp-action="Index">Đơn hàng</a>
+            @if (User.IsInRole(RoleNames.SalesStaff) || User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
+            {
+                var unhandledContacts = await Db.ContactMessages.CountAsync(m => !m.IsHandled);
+                <a asp-area="Admin" asp-controller="ContactMessages" asp-action="Index">Liên hệ từ khách
+                    @if (unhandledContacts > 0) { <span class="badge bg-danger rounded-pill">@unhandledContacts</span> }
+                </a>
+            }
             @if (User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Admin))
             {
                 <a asp-area="Admin" asp-controller="Customers" asp-action="Index">Khách hàng</a>

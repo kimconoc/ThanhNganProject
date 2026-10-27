@@ -1,4 +1,4 @@
-﻿@inject ThanhNgan.Web.Data.ApplicationDbContext Db
+@inject ThanhNgan.Web.Data.ApplicationDbContext Db
 @{ var contact = await ThanhNgan.Web.Data.ContactSettings.GetAsync(Db); }
 <!DOCTYPE html>
 <html lang="vi">
@@ -39,7 +39,7 @@
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="hai-san-tuoi-song">Hải sản tươi sống</a></li>
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="mam-ca-com">Mắm cá cơm</a></li>
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Blog">Cẩm nang</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="gioi-thieu">Giới thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">Giới thiệu</a></li>
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
                     </ul>
                     <form class="d-none d-lg-flex me-3" asp-area="" asp-controller="Shop" asp-action="Index" method="get">
@@ -137,7 +137,7 @@
                         <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="chinh-sach-giao-hang">Chính sách giao hàng</a></li>
                         <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="chinh-sach-doi-tra">Chính sách đổi trả</a></li>
                         <li><a asp-area="" asp-controller="Home" asp-action="Faq">Câu hỏi thường gặp</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Page" asp-route-slug="gioi-thieu">Giới thiệu</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="About">Giới thiệu</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3 mb-4">
@@ -146,6 +146,10 @@
                         <li><span>📞</span> @contact.Hotline</li>
                         <li><span>💬</span> Zalo: @contact.Zalo</li>
                         <li><span>✉️</span> @contact.Email</li>
+                        @if (!string.IsNullOrWhiteSpace(contact.Address))
+                        {
+                            <li><span>📍</span> @contact.Address</li>
+                        }
                     </ul>
                 </div>
             </div>

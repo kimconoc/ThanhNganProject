@@ -1,0 +1,175 @@
+@model AboutViewModel
+@inject ThanhNgan.Web.Data.ApplicationDbContext Db
+@{
+    ViewData["Title"] = "Giới thiệu";
+    var contact = await ThanhNgan.Web.Data.ContactSettings.GetAsync(Db);
+}
+
+<section class="about-hero">
+    <div class="container">
+        <span class="about-eyebrow">Về Thanh Ngân Seafood</span>
+        <h1>Hải sản sạch từ biển<br />đến bàn ăn nhà bạn</h1>
+        <p class="lead">Thanh Ngân lấy hàng trực tiếp từ ngư dân và vựa uy tín, có giấy phép kinh doanh đầy đủ.
+            Mỗi lô hàng đều ghi rõ nguồn gốc và ngày nhập, được bảo quản lạnh từ kho đến tay khách.</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <a class="btn btn-primary btn-lg rounded-pill px-4" asp-controller="Shop" asp-action="Index">Xem sản phẩm</a>
+            @if (Model.Licenses.Count > 0)
+            {
+                <a class="btn btn-outline-light btn-lg rounded-pill px-4" href="#giay-phep">Xem giấy phép kinh doanh</a>
+            }
+        </div>
+    </div>
+</section>
+
+@if (Model.ProductCount > 0 || Model.CompletedOrderCount > 0 || Model.ReviewCount > 0)
+{
+    <div class="container">
+        <div class="about-stats row g-0 text-center">
+            @if (Model.ProductCount > 0)
+            {
+                <div class="col"><strong>@Model.ProductCount</strong><span>sản phẩm đang bán</span></div>
+            }
+            @if (Model.CompletedOrderCount > 0)
+            {
+                <div class="col"><strong>@Model.CompletedOrderCount.ToString("N0")+</strong><span>đơn giao thành công</span></div>
+            }
+            @if (Model.ReviewCount > 0)
+            {
+                <div class="col"><strong>@Model.AverageRating.ToString("0.0")★</strong><span>từ @Model.ReviewCount đánh giá</span></div>
+            }
+        </div>
+    </div>
+}
+
+<div class="container my-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+            <h2 class="section-title mb-3">Câu chuyện của chúng tôi</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Story?.Content))
+            {
+                <div class="about-story">@Html.Raw(Model.Story.Content)</div>
+            }
+            else
+            {
+                <div class="about-story">
+                    <p>Thanh Ngân bắt đầu từ một vựa hải sản gia đình ở Cà Mau, vùng biển nổi tiếng với tôm sú, cua và cá cơm.
+                        Chúng tôi muốn khách hàng ở xa cũng được ăn hải sản tươi như người dân miền biển, với giá hợp lý và nguồn gốc rõ ràng.</p>
+                    <p>Hiện Thanh Ngân cung cấp hải sản đông lạnh, hải sản tươi sống và mắm cá cơm.
+                        Hàng giao nội thành trong ngày và gửi đi các tỉnh bằng xe lạnh.</p>
+                </div>
+            }
+        </div>
+        <div class="col-lg-6">
+            <div class="row g-3">
+                @foreach (var cat in Model.TopCategories)
+                {
+                    <div class="col-12">
+                        <a class="about-cat" asp-controller="Shop" asp-action="Index" asp-route-categorySlug="@cat.Slug">
+                            <strong>@cat.Name</strong>
+                            @if (!string.IsNullOrWhiteSpace(cat.Description)) { <span>@cat.Description</span> }
+                            <em>Xem sản phẩm →</em>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="about-commit py-5">
+    <div class="container">
+        <h2 class="section-title mb-4 text-center">Vì sao khách chọn Thanh Ngân?</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3"><div class="commit-card"><span>📍</span><h5>Nguồn gốc rõ ràng</h5><p>Mỗi lô hàng có mã lô, ngày nhập và nhà cung cấp, truy được tận nơi đánh bắt.</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="commit-card"><span>❄️</span><h5>Chuỗi lạnh liên tục</h5><p>Bảo quản đông lạnh tại kho. Giao tỉnh bằng xe lạnh để hàng đến nơi vẫn tươi.</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="commit-card"><span>🔄</span><h5>Nhập trước, xuất trước</h5><p>Kho xuất theo nguyên tắc lô nhập trước bán trước, nên không tồn hàng cũ.</p></div></div>
+            <div class="col-md-6 col-lg-3"><div class="commit-card"><span>↩️</span><h5>Đổi trả dễ dàng</h5><p>Hàng không đạt chất lượng được đổi mới hoặc hoàn tiền. <a asp-action="Page" asp-route-slug="chinh-sach-doi-tra">Xem chính sách</a></p></div></div>
+        </div>
+    </div>
+</section>
+
+@if (Model.Licenses.Count > 0)
+{
+    <section id="giay-phep" class="container my-5">
+        <h2 class="section-title mb-2">Giấy phép &amp; chứng nhận</h2>
+        <p class="text-muted mb-4">Thanh Ngân hoạt động hợp pháp, có đầy đủ giấy tờ theo quy định. Bấm vào từng giấy tờ để xem bản đầy đủ.</p>
+        <div class="row g-4">
+            @foreach (var lic in Model.Licenses)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
+                    @if (lic.IsImage)
+                    {
+                        <button type="button" class="license-card" data-bs-toggle="modal" data-bs-target="#licenseModal"
+                                data-src="@lic.Url" data-title="@lic.Title">
+                            <img src="@lic.Url" alt="@lic.Title" loading="lazy" />
+                            <span>@lic.Title</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <a class="license-card" href="@lic.Url" target="_blank" rel="noopener">
+                            <div class="license-pdf">PDF</div>
+                            <span>@lic.Title</span>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    <div class="modal fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="licenseModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body text-center"><img class="img-fluid" alt="" /></div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Reviews.Count > 0)
+{
+    <section class="container my-5">
+        <h2 class="section-title mb-4">Khách hàng nói gì về chúng tôi</h2>
+        <div class="row g-4">
+            @foreach (var r in Model.Reviews)
+            {
+                <div class="col-md-4">
+                    <div class="review-quote">
+                        <partial name="_Stars" model="(double)r.Rating" />
+                        <p>“@r.Comment”</p>
+                        <small><strong>@(string.IsNullOrWhiteSpace(r.User.FullName) ? "Khách hàng" : r.User.FullName)</strong> đã mua
+                            <a asp-controller="Product" asp-action="Details" asp-route-slug="@r.Product.Slug">@r.Product.Name</a></small>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<section class="container my-5">
+    <div class="about-cta">
+        <div>
+            <h3>Đặt hải sản tươi ngay hôm nay</h3>
+            <p class="mb-0">Cần tư vấn chọn hàng? Gọi hoặc nhắn Zalo cho Thanh Ngân để được báo giá nhanh.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-lg rounded-pill fw-bold" href="tel:@contact.Hotline.Replace(" ", "")">📞 @contact.Hotline</a>
+            <a class="btn btn-primary btn-lg rounded-pill" asp-controller="Shop" asp-action="Index">Mua ngay</a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.getElementById('licenseModal')?.addEventListener('show.bs.modal', function (e) {
+            var btn = e.relatedTarget;
+            this.querySelector('.modal-body img').src = btn.dataset.src;
+            this.querySelector('.modal-body img').alt = btn.dataset.title;
+            this.querySelector('.modal-title').textContent = btn.dataset.title;
+        });
+    </script>
+}

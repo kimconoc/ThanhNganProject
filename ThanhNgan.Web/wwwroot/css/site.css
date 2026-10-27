@@ -391,3 +391,82 @@ footer.site-footer .footer-contact-list li {
   0% { transform: scale(1); opacity: 0.6; }
   100% { transform: scale(1.9); opacity: 0; }
 }
+
+/* ===== Trang Giới thiệu ===== */
+.about-hero {
+  background: linear-gradient(120deg, var(--brand-navy) 0%, var(--brand-navy-dark) 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 0 5rem;
+}
+.about-hero h1 { font-weight: 800; margin: .5rem 0 1rem; }
+.about-hero .lead { max-width: 720px; margin: 0 auto 1.5rem; opacity: .9; }
+.about-eyebrow { color: var(--brand-accent); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; }
+.about-stats {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(11, 43, 74, .12);
+  margin-top: -2.5rem;
+  position: relative;
+}
+.about-stats .col { padding: 1.25rem .5rem; }
+.about-stats .col + .col { border-left: 1px solid #eee; }
+.about-stats strong { display: block; font-size: 1.8rem; color: var(--brand-accent); }
+.about-stats span { color: #6c757d; font-size: .9rem; }
+.about-story p { line-height: 1.75; }
+.about-cat {
+  display: block;
+  background: #fff;
+  border-left: 4px solid var(--brand-accent);
+  border-radius: .5rem;
+  padding: 1rem 1.25rem;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+  transition: transform .2s;
+}
+.about-cat:hover { transform: translateX(4px); color: inherit; }
+.about-cat strong { display: block; color: var(--brand-navy); font-size: 1.1rem; }
+.about-cat span { display: block; color: #6c757d; font-size: .9rem; }
+.about-cat em { font-style: normal; color: var(--brand-accent); font-size: .85rem; font-weight: 600; }
+.about-commit { background: #fff; }
+.commit-card { height: 100%; padding: 1.5rem; border-radius: 1rem; background: var(--brand-bg); text-align: center; }
+.commit-card > span { font-size: 2.2rem; }
+.commit-card h5 { color: var(--brand-navy); font-weight: 700; margin-top: .5rem; }
+.commit-card p { color: #555; font-size: .92rem; margin: 0; }
+.license-card {
+  display: block;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .75rem;
+  padding: .75rem;
+  text-align: center;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+  transition: box-shadow .2s, transform .2s;
+}
+.license-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, .12); color: inherit; }
+.license-card img, .license-pdf { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: .5rem; background: var(--brand-bg); }
+.license-pdf { display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #dc3545; }
+.license-card span { display: block; margin-top: .5rem; font-weight: 600; font-size: .9rem; color: var(--brand-navy); }
+.review-quote { height: 100%; background: #fff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, .05); }
+.review-quote p { font-style: italic; margin: .75rem 0; }
+.about-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(120deg, var(--brand-accent) 0%, var(--brand-accent-dark) 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+}
+.about-cta h3 { font-weight: 800; }
+.about-cta .btn-primary { background: var(--brand-navy); border-color: var(--brand-navy); }
+@media (max-width: 575px) {
+  .about-stats strong { font-size: 1.3rem; }
+  .about-stats span { font-size: .75rem; }
+}

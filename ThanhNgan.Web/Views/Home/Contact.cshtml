@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Liên hệ";
     var success = TempData["ContactSuccess"] as string;
-    var contact = ((string Hotline, string Zalo, string Messenger, string Email))ViewBag.Contact;
+    var contact = ((string Hotline, string Zalo, string Messenger, string Email, string Address))ViewBag.Contact;
 }
 
 <div class="container my-4">
@@ -24,7 +24,11 @@
         <div class="col-md-6">
             <h5>Thông tin cửa hàng</h5>
             <p>Hotline: @contact.Hotline<br />Zalo: @contact.Zalo<br />Email: @contact.Email</p>
-            <p>Địa chỉ: 123 Đường Hải Sản, TP. Cà Mau</p>
+            @if (!string.IsNullOrWhiteSpace(contact.Address))
+            {
+                <p>Địa chỉ: @contact.Address<br />
+                    <a href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(contact.Address)" target="_blank" rel="noopener">Xem bản đồ</a></p>
+            }
         </div>
     </div>
 </div>

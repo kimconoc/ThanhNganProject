@@ -58,8 +58,44 @@ public class HomeController : Controller
         return RedirectToAction(nameof(Contact));
     }
 
+    private static readonly string[] LicenseImageExts = { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+
+    public async Task<IActionResult> About([FromServices] IWebHostEnvironment env)
+    {
+        // Giấy phép: chỉ cần chép file ảnh/PDF vào wwwroot/GiayPhepKinhDoanh, trang tự hiển thị (tên file = tiêu đề).
+        var dir = Path.Combine(env.WebRootPath, "GiayPhepKinhDoanh");
+        var licenses = Directory.Exists(dir)
+            ? Directory.GetFiles(dir)
+                .Select(f => (Name: Path.GetFileName(f), Ext: Path.GetExtension(f).ToLowerInvariant()))
+                .Where(f => f.Ext == ".pdf" || LicenseImageExts.Contains(f.Ext))
+                .OrderBy(f => f.Name)
+                .Select(f => new LicenseFile(
+                    Url.Content($"~/GiayPhepKinhDoanh/{Uri.EscapeDataString(f.Name)}"),
+                    Path.GetFileNameWithoutExtension(f.Name).Replace('-', ' ').Replace('_', ' '),
+                    f.Ext != ".pdf"))
+                .ToList()
+            : new List<LicenseFile>();
+
+        var approvedReviews = _db.Reviews.Where(r => r.IsApproved);
+        var vm = new AboutViewModel
+        {
+            Licenses = licenses,
+            Story = await _db.StaticPages.FirstOrDefaultAsync(p => p.Slug == "gioi-thieu"),
+            TopCategories = await _db.Categories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.DisplayOrder).ToListAsync(),
+            Reviews = await approvedReviews.Where(r => r.Rating >= 4 && r.Comment != null && r.Comment != "")
+                .Include(r => r.User).Include(r => r.Product)
+                .OrderByDescending(r => r.CreatedAt).Take(3).ToListAsync(),
+            ProductCount = await _db.Products.CountAsync(p => p.IsActive),
+            CompletedOrderCount = await _db.Orders.CountAsync(o => o.Status == Models.Entities.OrderStatus.Completed),
+            ReviewCount = await approvedReviews.CountAsync(),
+            AverageRating = await approvedReviews.AverageAsync(r => (double?)r.Rating) ?? 0
+        };
+        return View(vm);
+    }
+
     public async Task<IActionResult> Page(string slug)
     {
+        if (slug == "gioi-thieu") return RedirectToAction(nameof(About)); // link cũ vẫn chạy
         var page = await _db.StaticPages.FirstOrDefaultAsync(p => p.Slug == slug);
         if (page is null) return NotFound();
         return View(page);

@@ -21,8 +21,8 @@ public class ContactSettingsTests
     public async Task SaveAsync_ThenGetAsync_RoundTrips()
     {
         var db = NewDb();
-        await ContactSettings.SaveAsync(db, "0123456789", "0987654321", "a@b.com");
+        await ContactSettings.SaveAsync(db, "0123456789", "0987654321", "", "a@b.com", " 12 Lý Thường Kiệt, Cà Mau ");
         var contact = await ContactSettings.GetAsync(db);
-        Assert.Equal(("0123456789", "0987654321", "a@b.com"), contact);
+        Assert.Equal(("0123456789", "0987654321", "", "a@b.com", "12 Lý Thường Kiệt, Cà Mau"), contact);
     }
 }

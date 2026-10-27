@@ -22,9 +22,9 @@ public class SettingsController : AdminControllerBase
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveContact(string hotline, string zalo, string messenger, string email)
+    public async Task<IActionResult> SaveContact(string hotline, string zalo, string messenger, string email, string? address)
     {
-        await ContactSettings.SaveAsync(_db, hotline, zalo, messenger, email);
+        await ContactSettings.SaveAsync(_db, hotline, zalo, messenger, email, address);
         TempData["AdminMessage"] = "Đã cập nhật thông tin liên hệ.";
         return RedirectToAction(nameof(Index));
     }

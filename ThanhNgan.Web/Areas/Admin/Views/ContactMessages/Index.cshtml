@@ -1,0 +1,39 @@
+@model List<ContactMessage>
+@{
+    ViewData["Title"] = "Liên hệ từ khách";
+    var showHandled = (bool)ViewBag.ShowHandled;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Liên hệ từ khách</h2>
+    <a class="btn btn-sm btn-outline-secondary" asp-action="Index" asp-route-showHandled="@(!showHandled)">
+        @(showHandled ? "Chỉ xem chưa xử lý" : "Xem cả đã xử lý")
+    </a>
+</div>
+<table class="table table-sm align-middle">
+    <thead><tr><th>Ngày gửi</th><th>Khách</th><th>Liên lạc</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var m in Model)
+    {
+        <tr class="@(m.IsHandled ? "text-muted" : "")">
+            <td class="text-nowrap">@m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@m.Name</td>
+            <td class="text-nowrap">
+                <a href="tel:@m.Phone">@m.Phone</a>
+                · <a href="@ContactSettings.ZaloChatUrl(m.Phone)" target="_blank" rel="noopener">Zalo</a>
+                @if (!string.IsNullOrWhiteSpace(m.Email)) { <br /><a href="mailto:@m.Email">@m.Email</a> }
+            </td>
+            <td style="white-space:pre-line">@m.Content</td>
+            <td>@(m.IsHandled ? "Đã xử lý" : "Chưa xử lý")</td>
+            <td>
+                <form asp-action="ToggleHandled" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <input type="hidden" name="showHandled" value="@showHandled.ToString().ToLower()" />
+                    <button class="btn btn-sm @(m.IsHandled ? "btn-outline-secondary" : "btn-outline-success")">@(m.IsHandled ? "Mở lại" : "Đã xử lý")</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+@if (Model.Count == 0) { <p class="text-muted">@(showHandled ? "Chưa có liên hệ nào." : "Không có liên hệ nào chờ xử lý.")</p> }
